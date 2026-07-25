@@ -1,0 +1,32 @@
+name: Reference data staleness report
+
+# Runs weekly. Needs read-only credentials (anon key is fine — same
+# permissions any signed-out visitor's browser would have), stored as
+# repo secrets. This never uses the service-role key.
+on:
+  schedule:
+    - cron: '0 9 * * 1'   # every Monday 09:00 UTC
+  workflow_dispatch: {}     # allow manual trigger too
+
+jobs:
+  stale-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - name: Run staleness report
+        id: report
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: npm run check:stale | tee stale-report.md
+        continue-on-error: true  # script exits 1 when stale rows exist — expected, not a failure
+      - name: Open/update tracking issue if data is stale
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: 'Reference data needs re-verification'
+          content-filepath: stale-report.md
+          labels: data-maintenance

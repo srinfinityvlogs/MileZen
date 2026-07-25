@@ -1,0 +1,23 @@
+{
+  "programmeName": "BA Club",
+  "entries": [
+    {
+      "originRegion": "North India",
+      "destRegion": "UK",
+      "cabin": "economy",
+      "pointsCost": 25000,
+      "sourceNote": "published chart",
+      "sourceUrl": "https://example.com/ba-club-reward-flight-finder",
+      "lastVerified": "2026-06-01"
+    },
+    {
+      "originRegion": "North India",
+      "destRegion": "UK",
+      "cabin": "business",
+      "pointsCost": 65000,
+      "sourceNote": "published chart",
+      "sourceUrl": "https://example.com/ba-club-reward-flight-finder",
+      "lastVerified": "2026-06-01"
+    }
+  ]
+}

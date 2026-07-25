@@ -1,0 +1,25 @@
+{
+  "fromProgrammeName": "HSBC Rewards",
+  "edges": [
+    {
+      "toProgrammeName": "BA Club",
+      "ratioFrom": 1,
+      "ratioTo": 1,
+      "transferTimeLabel": "~1 day",
+      "transferTimeMaxDays": 1,
+      "minTransfer": 1000,
+      "sourceUrl": "https://example.com/hsbc-travelone-transfer-partners",
+      "lastVerified": "2026-06-01"
+    },
+    {
+      "toProgrammeName": "Accor ALL",
+      "ratioFrom": 2000,
+      "ratioTo": 2500,
+      "transferTimeLabel": "\u2264 6 wks",
+      "transferTimeMaxDays": 42,
+      "minTransfer": 2000,
+      "sourceUrl": "https://example.com/hsbc-travelone-transfer-partners",
+      "lastVerified": "2026-06-01"
+    }
+  ]
+}

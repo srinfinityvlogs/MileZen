@@ -1,0 +1,26 @@
+[
+  {
+    "issuerName": "HDFC Bank",
+    "name": "Infinia",
+    "network": "Visa",
+    "annualFee": 12500,
+    "currency": "INR",
+    "earnProgrammeName": "SmartBuy Points"
+  },
+  {
+    "issuerName": "HSBC",
+    "name": "Premier",
+    "network": "Mastercard",
+    "annualFee": 20000,
+    "currency": "INR",
+    "earnProgrammeName": "HSBC Rewards"
+  },
+  {
+    "issuerName": "Amex",
+    "name": "Platinum Card",
+    "network": "Amex",
+    "annualFee": 75000,
+    "currency": "INR",
+    "earnProgrammeName": "Membership Rewards"
+  }
+]

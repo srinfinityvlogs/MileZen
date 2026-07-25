@@ -1,0 +1,9 @@
+[
+  { "name": "SmartBuy Points", "type": "bank_currency", "issuerName": "HDFC Bank" },
+  { "name": "HSBC Rewards", "type": "bank_currency", "issuerName": "HSBC" },
+  { "name": "Membership Rewards", "type": "bank_currency", "issuerName": "Amex" },
+  { "name": "Finnair Plus", "type": "airline", "issuerName": null },
+  { "name": "BA Club", "type": "airline", "issuerName": null },
+  { "name": "Accor ALL", "type": "hotel", "issuerName": null },
+  { "name": "Qantas Frequent Flyer", "type": "airline", "issuerName": null }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HSBC",
+    "cardName": "Premier",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 3,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HSBC",
+    "cardName": "Premier",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Amex",
+    "cardName": "Platinum Card",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Amex",
+    "cardName": "Platinum Card",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  }
+]

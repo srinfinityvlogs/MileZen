@@ -1,0 +1,23 @@
+name: Validate reference data
+
+# Runs on every PR touching /data — validates JSON shape only, using the
+# anon key is not even required since this never touches the database.
+# No secrets needed, so this is safe to run on PRs from forks too.
+on:
+  pull_request:
+    paths:
+      - 'data/**'
+      - 'lib/reference-data/**'
+      - 'scripts/ingest-reference-data.ts'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - name: Validate data files (dry run, no DB writes, no secrets used)
+        run: npm run ingest:reference:dry

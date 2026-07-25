@@ -1,0 +1,467 @@
+# MileZen
+
+The operating system for your cards, points, and miles.
+
+## Stack
+
+- **Next.js 14 (App Router)** — deployed on Vercel's free Hobby tier
+- **Supabase** — Postgres DB + Auth + Storage, free tier
+- **RLS-first**: every user-data table enforces isolation at the database
+  layer, not just in application code
+
+## Quick start
+
+1. Unzip the project.
+2. `cp .env.local.example .env.local` and fill in your Supabase project's
+   URL/keys (Project Settings → API) — see **Setup** below for the full list.
+3. In Supabase's SQL editor: run `supabase/schema.sql`, then
+   `supabase/storage_policies.sql`, then each file in
+   `supabase/migrations/` in order (002 → 003 → 004 → 005 → 006).
+4. `npm install`
+5. `npm run dev` — if you edit `.env.local` while the server is already
+   running, stop it (Ctrl+C) and restart; Next.js only reads env files at
+   startup.
+
+## Setup
+
+1. Create a free project at supabase.com.
+2. In the SQL editor, run `supabase/schema.sql`, then each file under
+   `supabase/migrations/` in numeric order (002, 003, 004, 005) — together
+   these create every table, RLS policy, and trigger.
+
+   **If your project has Supabase's "Enable automatic RLS" project
+   setting turned on**, it force-enables RLS (with zero policies) on
+   every new table — including the six global reference tables this
+   schema deliberately leaves RLS-off for (they use plain `GRANT`/`REVOKE`
+   instead — see schema.sql section 5). That combination makes queries
+   against those tables silently return zero rows, no error. Migration
+   `005_disable_rls_reference_tables.sql` corrects this — make sure you
+   run it, and if you ever recreate these tables, re-run it.
+3. In Supabase Auth settings, enable **Email OTP (magic link)** sign-in.
+   Disable password-based sign-in unless you specifically want it — fewer
+   credentials to protect.
+4. Create a **private** Storage bucket called `statements` for uploaded
+   PDFs. Do not make it public. Then run `supabase/storage_policies.sql`
+   in the SQL editor to lock it down so each user can only read/write
+   files under their own `auth.uid()` folder.
+5. Copy `.env.local.example` to `.env.local` and fill in:
+   - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from
+     Supabase project settings → API. Safe to expose to the browser.
+   - `SUPABASE_SERVICE_ROLE_KEY` — from the same page. **Never** expose
+     this to the client, never prefix with `NEXT_PUBLIC_`, never commit it.
+   - `GROQ_API_KEY` (or your chosen LLM provider's API key) — used
+     server-side only for the AI concierge, once we build that piece.
+6. `npm install`
+7. `npm run dev`
+
+## Deploying to Vercel (free tier)
+
+1. Push this repo to GitHub.
+2. Import it in Vercel.
+3. Add the same environment variables from `.env.local` in Vercel's
+   Project Settings → Environment Variables. Mark `SUPABASE_SERVICE_ROLE_KEY`
+   and `GROQ_API_KEY` as **server-only** (don't expose them — Vercel
+   only exposes vars prefixed `NEXT_PUBLIC_` to the client bundle anyway,
+   but double-check you never reference the service-role key from a
+   client component).
+4. Deploy.
+
+## Security notes for this project specifically
+
+Since this handles financial data, a few rules to keep permanently true
+as the codebase grows:
+
+- **Never bypass RLS for a normal user request.** The service-role client
+  (`lib/supabase/service.ts`) exists only for trusted server jobs
+  (reminders cron, reference-data ingestion, inbound-email webhook). If
+  you ever find yourself importing it inside code that handles a regular
+  user's page load or API call, stop — use the RLS-scoped client instead.
+- **No full card numbers, ever** — schema only allows `last4`.
+- **The points ledger is append-only** — there is no UPDATE/DELETE policy
+  on `point_ledger`. Corrections are new rows, not edits.
+- **Uploaded PDFs stay in private Storage**, referenced by path — never
+  inline file bytes in the database or in logs.
+- **LLM calls use the developer API key server-side only**, and only the
+  minimal derived context (not raw statements) is sent per request. Check
+  your provider's current data-retention/training terms before shipping —
+  these are commercial policies that can change, so verify rather than
+  assume.
+- **Audit log is server-write-only** (`audit_log` has no insert policy for
+  the `authenticated` role) so users can't forge or erase it.
+- Before adding any third-party analytics/error-tracking tool (Sentry,
+  PostHog, etc.), scrub PII/financial fields from anything sent to it.
+- Rotate the Supabase service-role key immediately if it's ever exposed
+  (committed to git, logged, pasted anywhere public).
+
+## Statement parsing pipeline
+
+`/dashboard/statements` is the UI for this — pick which card a PDF belongs
+to, upload it, and the page immediately triggers parsing and shows the
+result (parsed transaction count, or a clear error if the format wasn't
+recognized). History of past uploads and their status is listed below the
+form. **Realistic expectation**: only one issuer parser (HDFC) exists as a
+worked example (see "Adding support for a new bank" below) — uploading a
+real statement from any other bank will very likely fall through to the
+generic parser and may return "No recognizable transaction lines found."
+That's expected until you write a parser matching your actual bank's
+statement layout, not a bug.
+
+Text-layer extraction + regex only — no LLM, nothing leaves your server.
+
+1. **Upload** (`POST /api/statements/upload`): validates the file is
+   actually a PDF via magic bytes (not just the claimed content-type),
+   caps size at 10 MB, stores it at `<user_id>/<uuid>.pdf` in the private
+   `statements` bucket, and inserts a `statements` row with `status: pending`.
+2. **Parse** (`POST /api/statements/:id/parse`): downloads the file
+   (RLS/storage-policy scoped to the caller), extracts the text layer with
+   `pdf-parse`, and runs it through `lib/statement-parsing/parsers` —
+   issuer-specific parsers are tried first (currently: HDFC, as a worked
+   example), falling back to a bank-agnostic generic pattern.
+3. Extracted transactions are inserted into `transactions`; the raw
+   extracted text is **never written to the database or logs** — it only
+   exists in memory for the duration of that one request.
+
+### Adding support for a new bank
+
+Copy `lib/statement-parsing/parsers/hdfc.ts` → `<bank>.ts`, adjust:
+- `detect()`: a cheap string check for that bank's header/footer text
+- the line-matching regex to that bank's actual column layout
+- register it in `lib/statement-parsing/parsers/index.ts`
+
+Test regexes against a real (redacted) statement's text layer first —
+`pdf-parse` output layout varies more than you'd expect between banks.
+
+### Regex safety
+
+Every parser pattern uses bounded quantifiers (e.g. `{3,45}`, not `.*`) to
+avoid catastrophic backtracking (ReDoS) if a malicious or malformed PDF
+produces adversarial text. Keep this property when adding new parsers —
+avoid nested unbounded wildcards like `(.*)+`.
+
+## Transfer-partner graph + award search
+
+`POST /api/award-search` with `{ originRegion, destRegion, cabin, strategy }`
+returns every programme that can fly that route/cabin (from `award_charts`),
+plus every practical way to *get there* from a currency the user actually
+holds (from `transfer_partners`), ranked by the chosen `strategy`.
+
+- **`strategy: 'fewest_hops'`** — simplest to execute, least room for a
+  transfer to go wrong or a promo to expire mid-transfer.
+- **`strategy: 'best_value'`** — fewest source points spent per currency.
+- **`strategy: 'fastest'`** — lowest total worst-case transfer time.
+
+Design choices worth knowing about:
+- Path discovery (`findPaths.ts`) is capped at 4 hops and is cycle-safe —
+  it never revisits a programme within the same path. Ranking (`rankPaths.ts`)
+  is a separate, cheap sort applied *after* discovery, so adding a 4th
+  ranking strategy later never touches the graph-search code.
+- Ratios compound multiplicatively across hops (`totalFactor`); the
+  simplification of treating transfers as perfectly divisible (real
+  transfers move in fixed batches, e.g. 1000 at a time) is called out
+  directly in `findPaths.ts` — worth tightening once you're populating
+  real transfer-partner batch sizes.
+- "Best value" only makes sense to compare within the same source
+  currency — an Amex point and a cashback point aren't fungible, so the
+  response groups paths per target programme rather than flattening
+  everything into one global ranking.
+- `transfer_partners`/`award_charts` are global reference data (no RLS —
+  see schema.sql), while balances come from the RLS-scoped `point_balances`
+  view, so this route can never see another user's holdings.
+- Run `supabase/migrations/002_transfer_speed_days.sql` after the main
+  schema — it adds the numeric field the "fastest" ranking sorts on.
+
+## Award engine: rate-chart ingestion & maintenance
+
+This is the part that's actually hard — not the code, the data. Getting
+150+ programmes' award charts and transfer ratios right, and keeping them
+right as banks devalue and change terms, is a content-curation problem.
+The pipeline below treats it that way.
+
+### How it works
+
+1. **Data lives in git, not typed into a database by hand.** `data/programmes.yaml`
+   is the base catalog (issuers, programmes, card products). `data/transfer-partners.yaml`
+   holds transfer edges. `data/award-charts/*.yaml` — one file per
+   programme — holds redemption costs by route/cabin. Everything
+   references everything else **by name**, never by UUID, so a
+   contributor opening a PR never needs database access to propose a
+   change.
+2. **`npm run validate:data`** runs on every PR that touches `data/**`
+   (see `.github/workflows/data-pipeline.yml`). It checks every reference
+   resolves (no typo'd programme names), flags duplicate route/cabin
+   entries, and warns (without failing) on anything older than 180 days
+   (`STALENESS_THRESHOLD_DAYS` in `scripts/lib/schemas.ts`). This step
+   needs no secrets, so it's safe to run on a PR from any contributor,
+   including forks.
+3. **`npm run sync:data`** runs only after merge to `main`, using the
+   service-role key (as a GitHub Actions secret, never exposed to PRs).
+   It resolves names to UUIDs and upserts into Supabase, in dependency
+   order: issuers → programmes → card_products → transfer_partners →
+   award_charts. This is the **only** place in the codebase that writes
+   to those tables — the app's own API routes only ever read them
+   (enforced by the `revoke insert, update, delete ... from authenticated`
+   statements in `schema.sql`).
+4. **Nothing is silently overwritten.** `supabase/migrations/003_reference_data_history.sql`
+   adds a trigger that snapshots the old row into `award_charts_history` /
+   `transfer_partners_history` before every update — so if a chart devalues,
+   you can always answer "what did this used to cost, and when did it change,"
+   the same way the points ledger answers "why is my balance what it is."
+5. **`npm run check:staleness`** runs on a weekly schedule against the
+   *live* database (not just at PR time), since a chart can go stale just
+   from time passing with no new PRs touching it.
+
+### Adding or updating a rate
+
+1. Edit (or create) the relevant `data/award-charts/<programme>.yaml` file.
+2. Update `last_verified` to today's date and `source_note` to say how you
+   confirmed it (published chart / observed booking / forum report).
+3. Open a PR — CI validates automatically. Put your actual source (a
+   screenshot, a link, a description of the booking) in the PR
+   description; that's the human-readable audit trail for *why* the
+   number is what it is, on top of the git-commit audit trail for *what*
+   changed.
+4. On merge, the sync job pushes it to Supabase automatically.
+
+### Known limitation
+
+The sync script is upsert-only — it doesn't currently delete rows from
+Supabase that were removed from a YAML file (e.g., a route pulled from a
+chart entirely). For now, mark a removed entry's `points_cost` with a
+clearly wrong sentinel and open an issue, or extend `sync-reference-data.ts`
+with a reconciliation pass (diff existing DB rows against the file set,
+soft-delete anything missing) once this comes up in practice.
+
+## Award-chart & transfer-partner data pipeline
+
+This is the actual moat of the product — and it's fundamentally a
+curation problem, not a coding problem. The workflow treats every change
+as a reviewable PR, not a direct database edit:
+
+1. **Source of truth lives in git**, as human-readable JSON under `/data`
+   (`issuers.json`, `programmes.json`, `card-products.json`,
+   `mcc-rules.json`, `transfer-partners/*.json`, `award-charts/*.json`).
+   Files reference programmes, issuers, and card products **by name**, not
+   by database UUID — a contributor never needs DB access to propose a
+   data change.
+2. **Every entry carries provenance**: `sourceUrl` and `lastVerified`.
+   The schema (`lib/reference-data/schema.ts`) rejects a missing or
+   future-dated `lastVerified` — a small guard against copy-paste mistakes.
+3. **PRs touching `/data` are auto-validated** by
+   `.github/workflows/validate-reference-data.yml` — pure JSON/schema
+   validation, no database credentials needed, safe to run even on PRs
+   from forks.
+4. **A trusted maintainer applies the change** by running the ingestion
+   script locally (never from the deployed app, never via any API route):
+   ```
+   npm run ingest:reference:dry   # validate + preview, no writes
+   npm run ingest:reference       # writes, using SUPABASE_SERVICE_ROLE_KEY
+   ```
+   The script upserts by natural key (issuer/programme name), so re-running
+   it is always safe — it updates existing rows rather than duplicating them.
+5. **Staleness gets tracked, not ignored.** `npm run check:stale` reports
+   every award-chart/transfer-partner row not re-verified in 90+ days.
+   `.github/workflows/stale-reference-data.yml` runs this weekly and opens
+   a tracking issue when something needs a re-check — because a
+   forgotten row isn't a missing feature, it's MileZen confidently
+   telling a user a wrong price.
+
+### Where the actual data comes from
+
+This scaffold ships a handful of example entries to demonstrate the
+shape — populating real coverage across 150+ programmes means manually
+sourcing each bank's/airline's published transfer ratios and award
+charts (and periodically re-checking them, since they change). That
+research work is inherently manual; the pipeline above just makes it
+safe, reviewable, and repeatable once you have the numbers.
+
+### Security notes specific to this pipeline
+
+- The ingestion script is the **only** place `SUPABASE_SERVICE_ROLE_KEY`
+  is used outside of `lib/supabase/service.ts` — and only ever run from a
+  trusted maintainer's machine or a protected CI job, never from a
+  user-facing code path.
+- The staleness report uses the **anon key only** (read-only, same access
+  any visitor's browser already has) — never store the service-role key
+  in a workflow that runs on a schedule/fork-triggered basis.
+- If you wire the ingestion script into CI for convenience, restrict that
+  job to `workflow_dispatch` (manual trigger) on a protected branch, and
+  store `SUPABASE_SERVICE_ROLE_KEY` as a GitHub Actions secret — never a
+  repo variable, never committed, never logged.
+
+## AI concierge
+
+`POST /api/concierge` (chat UI at `/dashboard/concierge`) answers questions
+like "which card should I swipe for dining" or "how do I fly to the UK on
+points" — grounded entirely in the user's own data, fetched fresh per
+question, never assumed or memorized by the model.
+
+### How data exposure is minimized
+
+- **The model has no database access.** It can only call five narrow,
+  read-only tools (`lib/ai-concierge/tools.ts`): balances, upcoming
+  reminders, award search, card recommendation by category, and an
+  **aggregated** spending summary. There is no "run a query" tool and
+  no raw-statement-text tool.
+- **Every tool executes with the caller's own RLS-scoped Supabase client**
+  — the same one used everywhere else in the app, never the service-role
+  client. A user can structurally never retrieve another user's data
+  through the concierge, the same way they can't through any other route.
+- **Spending data is aggregated server-side before it reaches the model.**
+  `get_recent_spending_summary` returns category totals, not itemized
+  merchant/amount line items — the model never sees your raw transaction
+  list unless a future tool is deliberately built to expose it.
+- **The API used is Groq** (`GROQ_API_KEY`), an OpenAI-compatible
+  inference API — chosen specifically because it's genuinely free (no
+  expiring trial credits) and, per Groq's own data policy
+  (console.groq.com/docs/your-data), customer inference data is **not
+  retained by default**, let alone used for training. This was a
+  deliberate swap from Anthropic's API partway through this project once
+  cost became a factor — verify current terms yourself before relying on
+  this, since data-handling policies can change. `lib/ai-concierge/callModel.ts`
+  uses the official `openai` SDK pointed at Groq's base URL
+  (`https://api.groq.com/openai/v1`) rather than a Groq-specific SDK.
+- **Conversation history is short and pruned.** Only the last 6 turns are
+  sent per request (bounds both cost and how much ever sits in
+  `ai_messages`), and `npm run purge:ai-messages` deletes anything older
+  than 30 days — schedule it via Vercel Cron / GitHub Actions cron /
+  Supabase `pg_cron`.
+- **Users can opt out entirely** via `profiles.ai_context_opt_in` — the
+  route checks this before doing anything and refuses to run if it's off.
+- **The tool loop is capped** at 5 iterations (`MAX_TOOL_ITERATIONS` in
+  `lib/ai-concierge/callModel.ts`) so a confused model can't loop
+  indefinitely and run up cost.
+- **A basic per-user rate limit** guards against runaway API spend; the
+  comment in `app/api/concierge/route.ts` flags upgrading this to a
+  shared store (e.g. Upstash Redis) once you have real concurrent traffic.
+
+### Extending it
+
+Add a new tool by: writing its handler in `executeTool()`, adding its
+schema to `CONCIERGE_TOOLS`, and (if it touches new data) making sure the
+underlying table/view is RLS-scoped exactly like everything else in this
+app. Keep new tools aggregated/minimal by default — expose itemized data
+only when a feature genuinely requires it, not by default.
+
+## Adding a card
+
+`/dashboard/cards/new` — a card is a user's own instance
+(`user_cards`, RLS-scoped) of a global `card_products` catalog entry
+(reference data, seeded via the same ingestion pipeline as issuers and
+programmes — see `data/card-products.json`). Setting an annual fee date
+here automatically creates its reminder via the trigger described above;
+no extra code path needed. `POST /api/user-cards` validates the
+`card_product_id` is real and `last4` is exactly 4 digits before inserting.
+
+## Reminders & cron
+
+Card annual fees and point-expiry/custom reminders, kept fresh by a daily
+scheduled job — designed around Vercel Hobby's free-tier constraint of
+**at most once-per-day** cron invocations.
+
+### How annual-fee reminders stay in sync automatically
+
+`user_cards.annual_fee_date` is the single source of truth. A Postgres
+trigger (`sync_annual_fee_reminder()` in migration 004) keeps a matching
+`reminders` row updated any time that date is set or changed — so:
+- Adding/editing a card automatically creates or updates its fee reminder;
+  no app code has to remember to also touch the `reminders` table.
+- There's a DB-level unique constraint (one `annual_fee` reminder per
+  card), so this can never drift into duplicates.
+- The daily cron job only ever needs to update `user_cards.annual_fee_date`
+  forward by a year once it's past due — the trigger handles the rest,
+  including resetting `notified_at` so the new cycle gets a fresh email.
+
+Point-expiry and custom reminders are created directly by the user via
+`POST /api/reminders` (RLS-scoped, ordinary user request) — there's no
+generic "when do this programme's points expire" rule engine, since expiry
+policies vary too much per programme to model reliably; the user sets these.
+
+### What the daily cron job does (`GET /api/cron/reminders`)
+
+1. **Rolls forward** any annual-fee reminder that's now in the past.
+2. **Sends a notification email** for anything due within 7 days that
+   hasn't been notified yet (`notified_at IS NULL`).
+3. **Auto-dismisses** stale one-off reminders (point_expiry/custom) that
+   went 14+ days past due unacknowledged — keeps the list from
+   accumulating dead entries. Annual-fee reminders are exempt since they
+   auto-renew via the trigger instead.
+
+### Security
+
+- Protected by `CRON_SECRET` — Vercel automatically sends this as
+  `Authorization: Bearer <CRON_SECRET>` on scheduled invocations once the
+  env var is set in your Vercel project; the route rejects anything else.
+  **Set the same value in both `.env.local` (for local testing) and your
+  Vercel project's environment variables.**
+- This route is the **one legitimate place** in the app that uses the
+  service-role client for a request handler (not just a maintainer
+  script) — it must read and act across every user's reminders, which
+  RLS correctly forbids a normal session from doing. Every other route in
+  this app should keep using the RLS-scoped client.
+- Email-send failures are logged server-side only, without leaking
+  provider error bodies (which can include recipient details) into any
+  response.
+- `vercel.json` schedules this once daily (`0 8 * * *`, 08:00 UTC) — the
+  max frequency Hobby tier supports. If you upgrade to Pro later and want
+  same-day granularity, you can safely increase frequency; the notify
+  logic is idempotent (`notified_at` gating) either way.
+
+## Project structure
+
+```
+app/
+  page.tsx                 landing page
+  login/page.tsx           passwordless (magic link) sign-in
+  api/auth/callback/route.ts   exchanges magic-link code for session cookie
+  dashboard/page.tsx        protected page, RLS-safe data fetch example
+  api/statements/upload/route.ts        validated PDF upload
+  api/statements/[id]/parse/route.ts    text extraction + regex parsing + ledger insert
+lib/supabase/
+  client.ts                browser client (anon key, RLS applies)
+  server.ts                server client for Server Components (anon key, RLS applies)
+  service.ts                service-role client — DANGER ZONE, server-only, bypasses RLS
+lib/statement-parsing/
+  types.ts                 shared ParsedTransaction / ParseResult / StatementParser types
+  extractText.ts           pdf-parse wrapper with size/page limits
+  parsers/generic.ts       bank-agnostic fallback regex parser
+  parsers/hdfc.ts          worked example of an issuer-specific parser
+  parsers/index.ts         registry — tries issuer parsers first, then generic
+  api/award-search/route.ts             award chart lookup + ranked transfer paths
+lib/transfer-graph/
+  types.ts                 GraphEdge / TransferPath / RankStrategy types
+  buildGraph.ts             loads transfer_partners, builds adjacency list
+  findPaths.ts              depth-bounded, cycle-safe DFS path discovery
+  rankPaths.ts               sort-only ranking by fewest_hops / best_value / fastest
+lib/award-engine/searchAwards.ts  shared award-search core, used by API route AND concierge tool
+lib/ai-concierge/
+  tools.ts                  tool schemas + RLS-scoped executors (the model's only data access)
+  systemPrompt.ts            grounding + guardrail instructions
+  callModel.ts               tool-use loop against Groq (OpenAI-compatible API), iteration-capped
+app/api/concierge/route.ts  auth, opt-in check, rate limit, persists distilled exchange only
+app/api/reminders/route.ts            list/create point_expiry+custom reminders (RLS-scoped)
+app/api/reminders/[id]/route.ts        dismiss/delete a reminder (RLS-scoped)
+app/api/cron/reminders/route.ts        daily job: roll forward fees, notify, auto-dismiss (service role, CRON_SECRET-protected)
+app/dashboard/concierge/page.tsx  minimal chat UI
+lib/email/sendReminderEmail.ts    Resend HTTP call for reminder notifications
+scripts/purge-ai-messages.ts  deletes ai_messages older than 30 days (service role, cron-run)
+vercel.json                  daily cron schedule for /api/cron/reminders
+middleware.ts               session refresh + route protection
+types/database.ts           generated Supabase types (placeholder for now)
+supabase/schema.sql          full DB schema + RLS policies
+supabase/storage_policies.sql  storage bucket RLS (per-user folder isolation)
+supabase/migrations/          incremental schema changes, apply in order
+data/
+  issuers.json, programmes.json, card-products.json, mcc-rules.json  reference data by natural key (name)
+  transfer-partners/*.json               one file per source programme
+  award-charts/*.json                    one file per target programme
+app/api/user-cards/route.ts   creates a user_card (RLS-scoped) — triggers the annual-fee reminder automatically
+app/dashboard/cards/new/       add-card page + form
+app/dashboard/statements/       statements page: upload form + history list
+lib/reference-data/schema.ts  zod validation for every /data file shape
+scripts/
+  ingest-reference-data.ts    validates + upserts /data into Postgres (service role, maintainer-run only)
+  check-stale-reference-data.ts  reports rows not re-verified in 90+ days (anon key, read-only)
+.github/workflows/
+  validate-reference-data.yml  validates /data on every PR (no secrets needed)
+  stale-reference-data.yml     weekly staleness report -> auto-opened issue
+```

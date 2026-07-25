@@ -1,0 +1,25 @@
+{
+  "fromProgrammeName": "SmartBuy Points",
+  "edges": [
+    {
+      "toProgrammeName": "Finnair Plus",
+      "ratioFrom": 1,
+      "ratioTo": 1,
+      "transferTimeLabel": "instant",
+      "transferTimeMaxDays": 0,
+      "minTransfer": 1000,
+      "sourceUrl": "https://example.com/hdfc-smartbuy-transfer-partners",
+      "lastVerified": "2026-06-01"
+    },
+    {
+      "toProgrammeName": "Accor ALL",
+      "ratioFrom": 2000,
+      "ratioTo": 2500,
+      "transferTimeLabel": "\u2264 6 wks",
+      "transferTimeMaxDays": 42,
+      "minTransfer": 2000,
+      "sourceUrl": "https://example.com/hdfc-smartbuy-transfer-partners",
+      "lastVerified": "2026-06-01"
+    }
+  ]
+}
