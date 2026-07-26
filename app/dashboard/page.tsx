@@ -49,10 +49,13 @@ export default async function DashboardPage() {
         <Link href="/dashboard/cards/new">+ Add a card</Link>
       </p>
       <p>
+        <Link href="/dashboard/transactions">+ Log a transaction</Link>
+      </p>
+      <p>
         <Link href="/dashboard/concierge">Ask the concierge</Link>
       </p>
       <p>
-        <Link href="/dashboard/statements">Statements</Link>
+        <Link href="/dashboard/statements">Statements (optional PDF import)</Link>
       </p>
     </main>
   );
