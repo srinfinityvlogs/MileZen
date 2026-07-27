@@ -20,11 +20,13 @@ export interface AwardSearchOption {
   alreadyBookable: boolean;
   paths: Array<{
     sourceProgrammeId: string;
+    sourceProgrammeName: string;
     hopCount: number;
     totalMaxDays: number;
     sourcePointsNeeded: number;
     hops: Array<{
       toProgrammeId: string;
+      toProgrammeName: string;
       ratioFrom: number;
       ratioTo: number;
       transferTimeLabel: string;
@@ -67,6 +69,14 @@ export async function searchAwardOptions(
   const edges = await loadTransferGraph();
   const adjacency = buildAdjacency(edges);
 
+  // Path hops only carry programme IDs internally (the graph engine
+  // shouldn't need to care about display names) — resolve them to real
+  // names here, once, so every consumer (this UI, and the concierge's
+  // search_award_options tool) gets something a human — or a model
+  // writing a natural-language answer — can actually use.
+  const { data: allProgrammes } = await supabase.from('programmes').select('id, name');
+  const programmeNameById = new Map((allProgrammes ?? []).map((p) => [p.id, p.name]));
+
   const options: AwardSearchOption[] = chartRows.map((chart) => {
     const paths = findPaths(adjacency, heldProgrammeIds, chart.programme_id);
     const ranked = rankPaths(paths, rankStrategy, chart.points_cost);
@@ -79,11 +89,13 @@ export async function searchAwardOptions(
       alreadyBookable: (balanceRow?.balance ?? 0) >= chart.points_cost,
       paths: ranked.slice(0, 5).map((p) => ({
         sourceProgrammeId: p.sourceProgrammeId,
+        sourceProgrammeName: programmeNameById.get(p.sourceProgrammeId) ?? 'Unknown programme',
         hopCount: p.hopCount,
         totalMaxDays: p.totalMaxDays,
         sourcePointsNeeded: p.sourcePointsNeeded(chart.points_cost),
         hops: p.hops.map((h) => ({
           toProgrammeId: h.toProgrammeId,
+          toProgrammeName: programmeNameById.get(h.toProgrammeId) ?? 'Unknown programme',
           ratioFrom: h.ratioFrom,
           ratioTo: h.ratioTo,
           transferTimeLabel: h.transferTimeLabel,
