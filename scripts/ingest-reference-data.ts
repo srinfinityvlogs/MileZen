@@ -141,6 +141,9 @@ async function main() {
           annual_fee: cp.annualFee,
           currency: cp.currency,
           earn_programme_id: earnProgrammeId,
+          affiliate_link: cp.affiliateLink ?? null,
+          tagline: cp.tagline ?? null,
+          fee_waiver_note: cp.feeWaiverNote ?? null,
         },
         { onConflict: 'issuer_id,name' }
       )

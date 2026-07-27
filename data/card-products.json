@@ -5,7 +5,10 @@
     "network": "Visa",
     "annualFee": 12500,
     "currency": "INR",
-    "earnProgrammeName": "SmartBuy Points"
+    "earnProgrammeName": "SmartBuy Points",
+    "affiliateLink": "https://example.com/apply/hdfc-infinia?ref=milezen",
+    "tagline": "Best all-round rewards for high spenders",
+    "feeWaiverNote": "Waived on ₹10L+ annual spend"
   },
   {
     "issuerName": "HSBC",
@@ -13,7 +16,10 @@
     "network": "Mastercard",
     "annualFee": 20000,
     "currency": "INR",
-    "earnProgrammeName": "HSBC Rewards"
+    "earnProgrammeName": "HSBC Rewards",
+    "affiliateLink": "https://example.com/apply/hsbc-premier?ref=milezen",
+    "tagline": "Strong travel perks for premium banking customers",
+    "feeWaiverNote": null
   },
   {
     "issuerName": "Amex",
@@ -21,6 +27,20 @@
     "network": "Amex",
     "annualFee": 75000,
     "currency": "INR",
-    "earnProgrammeName": "Membership Rewards"
+    "earnProgrammeName": "Membership Rewards",
+    "affiliateLink": "https://example.com/apply/amex-platinum?ref=milezen",
+    "tagline": "Premium lounge access and concierge benefits",
+    "feeWaiverNote": null
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "name": "MoneyBack+",
+    "network": "Visa",
+    "annualFee": 0,
+    "currency": "INR",
+    "earnProgrammeName": "SmartBuy Points",
+    "affiliateLink": "https://example.com/apply/hdfc-moneyback-plus?ref=milezen",
+    "tagline": "Lifetime free — solid entry-level rewards",
+    "feeWaiverNote": "Lifetime free, no spend condition"
   }
 ]

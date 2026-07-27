@@ -20,6 +20,9 @@ export const CardProductSchema = z.object({
   annualFee: z.number().min(0),
   currency: z.string().length(3),
   earnProgrammeName: z.string().min(1),
+  affiliateLink: z.string().url().optional(),
+  tagline: z.string().max(140).nullable().optional(),
+  feeWaiverNote: z.string().max(140).nullable().optional(),
 });
 export const CardProductsFileSchema = z.array(CardProductSchema);
 
