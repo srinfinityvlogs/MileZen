@@ -138,7 +138,7 @@ export function AwardSearchForm({
           ) : (
             options.map((opt) => (
               <div key={opt.programmeId} style={{ border: '1px solid #eee', padding: 16, marginBottom: 12 }}>
-                <strong>{opt.programmeName}</strong> — {opt.pointsCost.toLocaleString()} pts
+                <strong>{opt.programmeName}</strong> - {opt.pointsCost.toLocaleString()} pts
                 {opt.alreadyBookable && (
                   <span style={{ color: 'seagreen', marginLeft: 8 }}>✓ You can book this now</span>
                 )}

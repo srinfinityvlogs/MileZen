@@ -28,7 +28,7 @@ export default async function StatementsPage() {
 
       {!cards || cards.length === 0 ? (
         <p>
-          Add a card first before uploading a statement — <a href="/dashboard/cards/new">add one here</a>.
+          Add a card first before uploading a statement - <a href="/dashboard/cards/new">add one here</a>.
         </p>
       ) : (
         <UploadStatementForm
@@ -46,8 +46,8 @@ export default async function StatementsPage() {
         <ul>
           {statements.map((s: any) => (
             <li key={s.id} style={{ marginBottom: 8 }}>
-              {new Date(s.uploaded_at).toLocaleDateString()} —{' '}
-              {s.user_cards ? `${s.user_cards.nickname ?? ''} •••• ${s.user_cards.last4}` : 'No card linked'} —{' '}
+              {new Date(s.uploaded_at).toLocaleDateString()} -{' '}
+              {s.user_cards ? `${s.user_cards.nickname ?? ''} •••• ${s.user_cards.last4}` : 'No card linked'} -{' '}
               <strong
                 style={{
                   color: s.status === 'parsed' ? 'seagreen' : s.status === 'failed' ? 'crimson' : '#999',

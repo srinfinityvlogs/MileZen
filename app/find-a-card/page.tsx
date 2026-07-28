@@ -72,7 +72,7 @@ export default async function FindACardPage({
     <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 640 }}>
       <h1>Find a card</h1>
       <p style={{ color: '#666', fontSize: 14 }}>
-        Tell us what you spend on and your annual fee budget — we'll show the best-earning cards
+        Tell us what you spend on and your annual fee budget - we'll show the best-earning cards
         for that category.
       </p>
 
@@ -117,7 +117,7 @@ export default async function FindACardPage({
           </h2>
 
           {results.length === 0 ? (
-            <p>No cards match that yet — try a higher fee budget or a different category.</p>
+            <p>No cards match that yet - try a higher fee budget or a different category.</p>
           ) : (
             results.map((card) => (
               <div key={card.id} style={{ border: '1px solid #eee', padding: 16, marginBottom: 12 }}>
@@ -127,7 +127,7 @@ export default async function FindACardPage({
                 {card.tagline && <p style={{ margin: '4px 0', color: '#555' }}>{card.tagline}</p>}
                 <p style={{ margin: '4px 0' }}>
                   {card.annualFee === 0 ? 'Lifetime free' : `${card.currency} ${card.annualFee.toLocaleString()}/yr`}
-                  {card.feeWaiverNote ? ` — ${card.feeWaiverNote}` : ''}
+                  {card.feeWaiverNote ? ` - ${card.feeWaiverNote}` : ''}
                 </p>
                 <p style={{ margin: '4px 0' }}>
                   Earns <strong>{card.rewardRate}</strong>{' '}

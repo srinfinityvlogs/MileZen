@@ -86,7 +86,7 @@ export function NewCardForm({ cardProducts }: { cardProducts: CardProductOption[
       </label>
 
       <label>
-        Annual fee due date (optional — sets a reminder automatically)
+        Annual fee due date (optional - sets a reminder automatically)
         <input
           type="date"
           value={annualFeeDate}

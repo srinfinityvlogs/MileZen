@@ -27,7 +27,7 @@ export default async function AwardSearchPage() {
       </p>
       {originRegions.length === 0 ? (
         <p>
-          No award charts seeded yet — see <code>data/award-charts/</code> in the README's data
+          No award charts seeded yet - see <code>data/award-charts/</code> in the README's data
           pipeline section.
         </p>
       ) : (

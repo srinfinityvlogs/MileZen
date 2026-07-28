@@ -27,14 +27,14 @@ export default async function TransactionsPage() {
     <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 640 }}>
       <h1>Transactions</h1>
       <p style={{ color: '#666', fontSize: 14 }}>
-        Manual entry is the primary way to log spending — statement upload (under{' '}
+        Manual entry is the primary way to log spending - statement upload (under{' '}
         <a href="/dashboard/statements">Statements</a>) is available too, but only recognizes a
         couple of bank formats so far.
       </p>
 
       {!cards || cards.length === 0 ? (
         <p>
-          Add a card first — <a href="/dashboard/cards/new">add one here</a>.
+          Add a card first - <a href="/dashboard/cards/new">add one here</a>.
         </p>
       ) : (
         <NewTransactionForm
@@ -57,10 +57,10 @@ export default async function TransactionsPage() {
         <ul>
           {transactions.map((t: any) => (
             <li key={t.id} style={{ marginBottom: 6 }}>
-              {t.txn_date} — {t.merchant} — {t.currency} {t.amount}
+              {t.txn_date} - {t.merchant} - {t.currency} {t.amount}
               {t.category_note ? ` (${t.category_note})` : ''}
-              {t.points_earned ? ` — ${t.points_earned} pts` : ''}
-              {t.user_cards ? ` — ${t.user_cards.nickname ?? ''} •••• ${t.user_cards.last4}` : ''}
+              {t.points_earned ? ` - ${t.points_earned} pts` : ''}
+              {t.user_cards ? ` - ${t.user_cards.nickname ?? ''} •••• ${t.user_cards.last4}` : ''}
             </li>
           ))}
         </ul>

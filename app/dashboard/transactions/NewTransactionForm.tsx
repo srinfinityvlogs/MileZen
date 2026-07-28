@@ -144,7 +144,7 @@ export function NewTransactionForm({ cards }: { cards: CardOption[] }) {
       </label>
 
       <label>
-        Points earned {suggestedPoints !== null && !pointsTouchedByUser ? '(auto-suggested — edit if needed)' : '(optional)'}
+        Points earned {suggestedPoints !== null && !pointsTouchedByUser ? '(auto-suggested - edit if needed)' : '(optional)'}
         <input
           type="number"
           value={displayedPoints}

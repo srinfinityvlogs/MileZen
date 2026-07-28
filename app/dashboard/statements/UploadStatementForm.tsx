@@ -99,7 +99,7 @@ export function UploadStatementForm({ cards }: { cards: CardOption[] }) {
       )}
 
       <p style={{ fontSize: 12, color: '#666' }}>
-        Only text-layer extraction + pattern matching is used to read this file — nothing is sent to
+        Only text-layer extraction + pattern matching is used to read this file - nothing is sent to
         any AI model or third party during parsing.
       </p>
     </form>

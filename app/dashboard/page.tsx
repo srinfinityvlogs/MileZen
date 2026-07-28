@@ -47,14 +47,14 @@ export default async function DashboardPage() {
     <main style={{ padding: 40, fontFamily: 'system-ui' }}>
       <h1>Your balances</h1>
       {!balances || balances.length === 0 ? (
-        <p>No points logged yet — log a transaction with points earned to see balances here.</p>
+        <p>No points logged yet - log a transaction with points earned to see balances here.</p>
       ) : (
         <ul>
           {balances
             .filter((b: any) => b.balance && b.balance > 0)
             .map((b: any) => (
               <li key={b.programme_id}>
-                <strong>{b.programmes?.name ?? 'Unknown programme'}</strong> — {b.balance.toLocaleString()} pts
+                <strong>{b.programmes?.name ?? 'Unknown programme'}</strong> - {b.balance.toLocaleString()} pts
               </li>
             ))}
         </ul>
@@ -68,7 +68,7 @@ export default async function DashboardPage() {
           {cards.map((c: any) => (
             <li key={c.id}>
               {c.nickname ?? c.card_products?.name ?? 'Card'} •••• {c.last4}
-              {c.annual_fee_date ? ` — annual fee due ${c.annual_fee_date}` : ''}
+              {c.annual_fee_date ? ` - annual fee due ${c.annual_fee_date}` : ''}
             </li>
           ))}
         </ul>
