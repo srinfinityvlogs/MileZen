@@ -54,5 +54,101 @@
     "mccLabel": "Travel",
     "rewardRate": 5,
     "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 1,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 2,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 1,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
   }
 ]

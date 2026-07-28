@@ -131,7 +131,7 @@ export default async function FindACardPage({
                 </p>
                 <p style={{ margin: '4px 0' }}>
                   Earns <strong>{card.rewardRate}</strong>{' '}
-                  {card.rewardType === 'cashback_pct' ? '% cashback' : 'points per $1'} on {category}
+                  {card.rewardType === 'cashback_pct' ? '% cashback' : 'points per ₹1'} on {category}
                 </p>
                 <a
                   href={card.affiliateLink}

@@ -42,5 +42,38 @@
     "affiliateLink": "https://example.com/apply/hdfc-moneyback-plus?ref=milezen",
     "tagline": "Lifetime free — solid entry-level rewards",
     "feeWaiverNote": "Lifetime free, no spend condition"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "name": "Amazon Pay",
+    "network": "Visa",
+    "annualFee": 0,
+    "currency": "INR",
+    "earnProgrammeName": "ICICI Rewards",
+    "affiliateLink": "https://example.com/apply/icici-amazon-pay?ref=milezen",
+    "tagline": "Lifetime free — straightforward cashback, no caps to track",
+    "feeWaiverNote": "Lifetime free, no spend condition"
+  },
+  {
+    "issuerName": "SBI Card",
+    "name": "SimplyCLICK",
+    "network": "Visa",
+    "annualFee": 499,
+    "currency": "INR",
+    "earnProgrammeName": "SBI Rewards",
+    "affiliateLink": "https://example.com/apply/sbi-simplyclick?ref=milezen",
+    "tagline": "Budget-friendly, strong grocery rewards",
+    "feeWaiverNote": "Waived on ₹1L+ annual spend"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "name": "Sapphiro",
+    "network": "Mastercard",
+    "annualFee": 3500,
+    "currency": "INR",
+    "earnProgrammeName": "ICICI Rewards",
+    "affiliateLink": "https://example.com/apply/icici-sapphiro?ref=milezen",
+    "tagline": "Mid-tier travel and dining rewards without a premium fee",
+    "feeWaiverNote": "Waived on ₹4L+ annual spend"
   }
 ]
