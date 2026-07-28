@@ -150,5 +150,229 @@
     "mccLabel": "Travel",
     "rewardRate": 4,
     "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Infinia",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HSBC",
+    "cardName": "Premier",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HSBC",
+    "cardName": "Premier",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 3,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HSBC",
+    "cardName": "Premier",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HSBC",
+    "cardName": "Premier",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 3,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Amex",
+    "cardName": "Platinum Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Amex",
+    "cardName": "Platinum Card",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Amex",
+    "cardName": "Platinum Card",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Amex",
+    "cardName": "Platinum Card",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "MoneyBack+",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Amazon Pay",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 1,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyCLICK",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 3,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "Sapphiro",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
   }
 ]

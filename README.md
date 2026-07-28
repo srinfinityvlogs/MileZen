@@ -16,7 +16,7 @@ The operating system for your cards, points, and miles.
    URL/keys (Project Settings → API) — see **Setup** below for the full list.
 3. In Supabase's SQL editor: run `supabase/schema.sql`, then
    `supabase/storage_policies.sql`, then each file in
-   `supabase/migrations/` in order (002 → 003 → 004 → 005 → 006).
+   `supabase/migrations/` in order (002 → 003 → 004 → 005 → 006 → 007 → 008).
 4. `npm install`
 5. `npm run dev` — if you edit `.env.local` while the server is already
    running, stop it (Ctrl+C) and restart; Next.js only reads env files at
@@ -26,7 +26,7 @@ The operating system for your cards, points, and miles.
 
 1. Create a free project at supabase.com.
 2. In the SQL editor, run `supabase/schema.sql`, then each file under
-   `supabase/migrations/` in numeric order (002, 003, 004, 005) — together
+   `supabase/migrations/` in numeric order (002, 003, 004, 005, 006, 007, 008) — together
    these create every table, RLS policy, and trigger.
 
    **If your project has Supabase's "Enable automatic RLS" project
@@ -92,6 +92,16 @@ as the codebase grows:
   PostHog, etc.), scrub PII/financial fields from anything sent to it.
 - Rotate the Supabase service-role key immediately if it's ever exposed
   (committed to git, logged, pasted anywhere public).
+- **Any Postgres VIEW must be created `WITH (security_invoker = true)`.**
+  This was a real gap found and fixed in this project (migration 007):
+  Postgres views run with the permissions of their *owner* by default —
+  typically the `postgres` superuser in Supabase — which silently
+  **bypasses RLS** on the underlying table for anyone querying the view,
+  even the `authenticated` role. `point_balances` was missing this
+  originally. If you add another view later, this option is easy to
+  forget and won't error — it'll just silently leak cross-user data. Test
+  every new view the same way: sign in as one user, query it, and confirm
+  you never see another user's rows.
 
 ## Statement parsing pipeline
 
@@ -140,6 +150,20 @@ avoid nested unbounded wildcards like `(.*)+`.
 
 ## Transfer-partner graph + award search
 
+`/dashboard/award-search` is the UI for this — pick a route, cabin, and
+ranking strategy (toggle between fewest hops / best value / fastest),
+and see which programmes can book it plus the best transfer path from
+what you already hold. It reuses the exact same `searchAwardOptions()`
+function as `POST /api/award-search` and the concierge's
+`search_award_options` tool — one implementation, three surfaces.
+
+**Fixed while building this UI**: path hops previously only carried raw
+programme UUIDs, not names — harmless for the JSON API, but unusable for
+a human-readable page (and, it turns out, unusable for the concierge too:
+the model had been getting UUIDs instead of real programme names this
+whole time when reasoning about transfer paths). `searchAwards.ts` now
+resolves every hop to a real name before returning.
+
 `POST /api/award-search` with `{ originRegion, destRegion, cabin, strategy }`
 returns every programme that can fly that route/cabin (from `award_charts`),
 plus every practical way to *get there* from a currency the user actually
@@ -169,6 +193,45 @@ Design choices worth knowing about:
   view, so this route can never see another user's holdings.
 - Run `supabase/migrations/002_transfer_speed_days.sql` after the main
   schema — it adds the numeric field the "fastest" ranking sorts on.
+
+## Find a card (public, affiliate-driven card search)
+
+`/find-a-card` — deliberately **outside** `/dashboard` and requires no
+login, because the target user hasn't signed up yet. This is a genuine
+scope addition beyond the ledger: search by spend category + an annual
+fee tier (Lifetime Free / Below ₹500 / ₹500-₹1,000 / ₹1,000-₹5,000 /
+Above ₹5,000), get the top 5 highest-earning cards for that category
+within budget, each with an "Apply Now" affiliate link.
+
+**Why this is architected the way it is:**
+- **Server-rendered, not a client fetch.** Results live at a real,
+  bookmarkable, shareable URL (`/find-a-card?category=Dining&feeTier=below_500`)
+  built from a plain `<form method="get">` — works with JavaScript
+  disabled, and is crawlable, which matters directly for the SEO work
+  planned later. Retrofitting SEO onto a client-side-fetched page is much
+  more painful than building it server-rendered from the start.
+- **`card_products` already had a public `SELECT` grant for the `anon`
+  role**, not just `authenticated` (see schema.sql section 5) — so this
+  page works for a signed-out visitor with zero RLS/grant changes needed,
+  only new columns (migration 008: `affiliate_link`, `tagline`,
+  `fee_waiver_note`).
+- **Only cards with a real `affiliate_link` are ever shown** — the query
+  explicitly filters `.not('affiliate_link', 'is', null)`, so a card
+  added to the catalog without a real apply link never gets recommended
+  by accident.
+- **`rel="sponsored"`** on every Apply Now link — the correct way to mark
+  affiliate/paid links for search engines, per Google's own guidance.
+  Costs nothing to do correctly now versus retrofitting later.
+- **A visible affiliate disclosure** is shown alongside results. Worth
+  keeping prominent as this grows — affiliate marketing typically expects
+  clear disclosure, and depending on your jurisdiction there may be
+  specific rules around presenting financial-product comparisons (this
+  isn't legal advice — worth a real look before this goes fully public).
+
+**Extending the catalog** uses the same `data/card-products.json` +
+`npm run ingest:reference` pipeline as everything else — add
+`affiliateLink`/`tagline`/`feeWaiverNote` to a card entry and re-run
+ingestion.
 
 ## Award engine: rate-chart ingestion & maintenance
 
@@ -342,6 +405,79 @@ underlying table/view is RLS-scoped exactly like everything else in this
 app. Keep new tools aggregated/minimal by default — expose itemized data
 only when a feature genuinely requires it, not by default.
 
+## Logging transactions
+
+`/dashboard/transactions` is the **primary** way spending gets into the
+ledger — manual entry, not statement parsing. This was a deliberate call:
+PDF parsing only recognizes bank formats we've explicitly written a
+parser for (currently just one worked example), so it can't be the main
+path for a real, multi-bank user base. Statement upload
+(`/dashboard/statements`) still exists as an optional convenience for
+whichever banks you've written parsers for.
+
+**This is also where a real architectural gap got closed.** Until now,
+`transactions` and `point_ledger` were disconnected — nothing ever
+automatically wrote an `earn` entry when a transaction happened, so
+`point_balances` (which sums `point_ledger`) never actually reflected
+card spending. `POST /api/transactions` fixes this: if you provide
+`pointsEarned`, it looks up the card's `earn_programme_id` (from
+`card_products`) and inserts a matching `point_ledger` row in the same
+request, linked via `related_txn_id`. The form itself auto-suggests a
+points value from the card's own `mcc_rules` for the chosen category —
+editable before saving, never silently overridden.
+
+**Known follow-up, not yet done**: `/api/statements/[id]/parse` still
+only inserts into `transactions`, not `point_ledger` — the regex parser
+doesn't compute a rewards value from the statement text, so there's
+nothing to bridge yet on that path. Worth revisiting if statement parsing
+gets more investment later.
+
+### Spend categories
+
+Seven categories now exist consistently everywhere they're referenced:
+Dining, Groceries, Travel, Fuel, Online Shopping, Utilities, Entertainment
+- `app/find-a-card/page.tsx` (public search dropdown)
+- `app/dashboard/transactions/NewTransactionForm.tsx` (manual entry dropdown)
+- `lib/ai-concierge/tools.ts` (the concierge's `CATEGORY_SYNONYMS` table and
+  `get_card_recommendation` tool description)
+- `data/mcc-rules.json` (47 entries across all 7 seeded card products)
+
+Adding an 8th category later means updating all four of these — there's no
+single source of truth for the category list, since it's used in genuinely
+different contexts (a public marketing dropdown vs. an LLM tool schema).
+Worth extracting into a shared constant if this keeps growing.
+
+### Click/search tracking (migration 009)
+
+`/find-a-card` logs two event types into `card_search_events`, a
+write-only table (RLS allows INSERT from anyone, no SELECT policy at all
+— only a future service-role analytics script can read it back):
+- **`search`**: logged server-side whenever a category search runs
+- **`apply_click`**: logged by `/api/apply/:cardId`, a redirect wrapper
+  that every "Apply Now" link points to instead of the affiliate URL
+  directly. This is the standard affiliate-tracking pattern — a
+  server-side redirect logs reliably even with JS disabled or an ad
+  blocker active, unlike a client-side `onClick` handler racing against
+  navigation to a new tab.
+
+Nothing here is tied to a `user_id` — `/find-a-card` is fully public and
+unauthenticated by design, so there's no user to attribute events to, and
+this deliberately doesn't try to fingerprint anonymous visitors either.
+
+### Visual design
+
+`/find-a-card` uses a ledger/passbook-inspired design system (deep ink
+navy on ledger-paper, emerald accent, a rotated brass "Top Pick" stamp on
+the #1 result, tabular-mono numerals for fee/reward columns) rather than
+a generic pricing-card grid — see `find-a-card.module.css`. Fonts
+(Fraunces, IBM Plex Sans, IBM Plex Mono) load via a plain `<link>` tag
+rather than `next/font/google`, deliberately — `next/font` fetches font
+files at *build* time, which failed in the sandbox environment this was
+built in (no network access to fonts.googleapis.com) but will work fine
+on Vercel; the `<link>` approach fetches in the visitor's browser instead,
+functionally equivalent and easier to verify locally in restricted
+environments.
+
 ## Adding a card
 
 `/dashboard/cards/new` — a card is a user's own instance
@@ -410,7 +546,10 @@ policies vary too much per programme to model reliably; the user sets these.
 
 ```
 app/
-  page.tsx                 landing page
+  page.tsx                 landing page — auth-aware, links to /find-a-card and /dashboard
+  find-a-card/page.tsx      PUBLIC card search + affiliate Apply Now links, no auth required
+  find-a-card/find-a-card.module.css  ledger/passbook-inspired styling
+  api/apply/[cardId]/route.ts  logs apply_click, then redirects to the real affiliate link
   login/page.tsx           passwordless (magic link) sign-in
   api/auth/callback/route.ts   exchanges magic-link code for session cookie
   dashboard/page.tsx        protected page, RLS-safe data fetch example
@@ -426,6 +565,7 @@ lib/statement-parsing/
   parsers/generic.ts       bank-agnostic fallback regex parser
   parsers/hdfc.ts          worked example of an issuer-specific parser
   parsers/index.ts         registry — tries issuer parsers first, then generic
+app/dashboard/award-search/     award search page: route/cabin/strategy form + results
   api/award-search/route.ts             award chart lookup + ranked transfer paths
 lib/transfer-graph/
   types.ts                 GraphEdge / TransferPath / RankStrategy types
@@ -456,6 +596,8 @@ data/
   award-charts/*.json                    one file per target programme
 app/api/user-cards/route.ts   creates a user_card (RLS-scoped) — triggers the annual-fee reminder automatically
 app/dashboard/cards/new/       add-card page + form
+app/api/transactions/route.ts   creates a transaction + matching point_ledger 'earn' entry (RLS-scoped)
+app/dashboard/transactions/     manual entry form (with auto-suggested points) + recent history
 app/dashboard/statements/       statements page: upload form + history list
 lib/reference-data/schema.ts  zod validation for every /data file shape
 scripts/

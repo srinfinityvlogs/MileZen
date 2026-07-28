@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
+import styles from './find-a-card.module.css';
 
-const CATEGORIES = ['Dining', 'Groceries', 'Travel'];
+const CATEGORIES = ['Dining', 'Groceries', 'Travel', 'Fuel', 'Online Shopping', 'Utilities', 'Entertainment'];
 
 // Bucketed fee tiers instead of a free-text "max fee" number — easier for
 // a visitor to pick from than guessing/typing an exact rupee figure.
@@ -24,7 +25,6 @@ interface CardResult {
   issuerName: string;
   annualFee: number;
   currency: string;
-  affiliateLink: string;
   tagline: string | null;
   feeWaiverNote: string | null;
   rewardRate: number;
@@ -42,14 +42,17 @@ export default async function FindACardPage({
   searchParams: { category?: string; feeTier?: string };
 }) {
   const supabase = await createClient();
-  const category = searchParams.category;
+  // Computed once, as a guaranteed string ('' when absent) — TypeScript
+  // can't reliably narrow `searchParams.category` (string | undefined)
+  // across the .map()/.flatMap() closures below, so this avoids fighting
+  // that everywhere it's used instead of narrowing once and losing it.
+  const category = searchParams.category ?? '';
   const selectedTier = FEE_TIERS.find((t) => t.value === searchParams.feeTier);
 
   let results: CardResult[] = [];
-  let searched = false;
+  const searched = category.length > 0;
 
-  if (category) {
-    searched = true;
+  if (searched) {
     // card_products has a public SELECT grant for the `anon` role too
     // (see schema.sql section 5) — this works whether or not the visitor
     // is signed in.
@@ -80,7 +83,6 @@ export default async function FindACardPage({
             issuerName: card.issuers?.name ?? '',
             annualFee: card.annual_fee,
             currency: card.currency,
-            affiliateLink: card.affiliate_link,
             tagline: card.tagline,
             feeWaiverNote: card.fee_waiver_note,
             rewardRate: rule.reward_rate,
@@ -90,102 +92,155 @@ export default async function FindACardPage({
       })
       .sort((a, b) => b.rewardRate - a.rewardRate)
       .slice(0, 5);
+
+    // Log the search — best-effort, never let this block or break the
+    // page if it fails. Write-only table (see migration 009): nobody can
+    // read this back through the public API, only a future service-role
+    // analytics script.
+    try {
+      await supabase.from('card_search_events').insert({
+        event_type: 'search',
+        category,
+        fee_tier: searchParams.feeTier ?? null,
+      });
+    } catch (err) {
+      console.error('Failed to log search event', (err as Error).message);
+    }
   }
 
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 640 }}>
-      <h1>Find a card</h1>
-      <p style={{ color: '#666', fontSize: 14 }}>
-        Tell us what you spend on and your annual fee budget - we'll show the best-earning cards
-        for that category.
-      </p>
+    <div className={styles.page}>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap"
+      />
+      <div className={styles.container}>
+        <p className={styles.mark}>MileZen</p>
+        <h1 className={styles.title}>Find a card</h1>
+        <p className={styles.intro}>
+          Tell us what you spend on and your annual fee budget. We'll show the best-earning cards
+          for that category, ranked by reward rate.
+        </p>
 
-      {/* Plain GET form — works with JS disabled, and results are a real,
-          bookmarkable, shareable, crawlable URL like
-          /find-a-card?category=Dining&feeTier=below_500 */}
-      <form method="get" style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 16 }}>
-        <label>
-          Category
-          <select name="category" defaultValue={category ?? ''} required style={{ display: 'block', padding: 8 }}>
-            <option value="" disabled>
-              Choose one
-            </option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
+        {/* Plain GET form — works with JS disabled, and results are a real,
+            bookmarkable, shareable, crawlable URL like
+            /find-a-card?category=Dining&feeTier=below_500 */}
+        <form method="get" className={styles.form}>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel} htmlFor="category">
+              Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              defaultValue={category ?? ''}
+              required
+              className={styles.select}
+            >
+              <option value="" disabled>
+                Choose one
               </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Annual fee
-          <select
-            name="feeTier"
-            defaultValue={searchParams.feeTier ?? ''}
-            style={{ display: 'block', padding: 8 }}
-          >
-            <option value="">Any</option>
-            {FEE_TIERS.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit" style={{ alignSelf: 'flex-end', height: 38 }}>
-          Search
-        </button>
-      </form>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {searched && (
-        <div style={{ marginTop: 32 }}>
-          <h2 style={{ fontSize: 18 }}>
-            Top picks for {category}
-            {selectedTier ? ` (${selectedTier.label})` : ''}
-          </h2>
+          <div className={styles.field}>
+            <label className={styles.fieldLabel} htmlFor="feeTier">
+              Annual fee
+            </label>
+            <select
+              id="feeTier"
+              name="feeTier"
+              defaultValue={searchParams.feeTier ?? ''}
+              className={styles.select}
+            >
+              <option value="">Any</option>
+              {FEE_TIERS.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          {results.length === 0 ? (
-            <p>No cards match that yet - try a different fee range or category.</p>
-          ) : (
-            results.map((card) => (
-              <div key={card.id} style={{ border: '1px solid #eee', padding: 16, marginBottom: 12 }}>
-                <strong>
-                  {card.issuerName} {card.name}
-                </strong>
-                {card.tagline && <p style={{ margin: '4px 0', color: '#555' }}>{card.tagline}</p>}
-                <p style={{ margin: '4px 0' }}>
-                  {card.annualFee === 0 ? 'Lifetime free' : `${card.currency} ${card.annualFee.toLocaleString()}/yr`}
-                  {card.feeWaiverNote ? ` - ${card.feeWaiverNote}` : ''}
-                </p>
-                <p style={{ margin: '4px 0' }}>
-                  Earns <strong>{card.rewardRate}</strong>{' '}
-                  {card.rewardType === 'cashback_pct' ? '% cashback' : 'points per \u20b91'} on {category}
-                </p>
-                <a
-                  href={card.affiliateLink}
-                  target="_blank"
-                  rel="noopener noreferrer sponsored"
-                  style={{
-                    display: 'inline-block',
-                    marginTop: 8,
-                    padding: '8px 16px',
-                    background: '#111',
-                    color: '#fff',
-                    textDecoration: 'none',
-                  }}
-                >
-                  Apply Now
-                </a>
-              </div>
-            ))
-          )}
+          <button type="submit" className={styles.button}>
+            Search
+          </button>
+        </form>
 
-          <p style={{ fontSize: 12, color: '#999', marginTop: 24 }}>
-            MileZen may earn a commission if you apply for a card through these links, at no cost
-            to you. This never affects which cards are shown or how they're ranked.
-          </p>
-        </div>
-      )}
-    </main>
+        {searched && (
+          <>
+            <p className={styles.resultsHeading}>
+              Top picks for {category}
+              {selectedTier ? ` \u00b7 ${selectedTier.label}` : ''}
+            </p>
+
+            {results.length === 0 ? (
+              <p className={styles.empty}>No cards match that yet. Try a different fee range or category.</p>
+            ) : (
+              results.map((card, i) => (
+                <div key={card.id} className={styles.row}>
+                  {i === 0 && (
+                    <div className={styles.stamp} aria-hidden="true">
+                      <span className={styles.stampText}>
+                        Top
+                        <br />
+                        Pick
+                      </span>
+                    </div>
+                  )}
+                  <span className={styles.rank}>{String(i + 1).padStart(2, '0')}</span>
+                  <div className={styles.cardInfo}>
+                    <p className={styles.cardName}>
+                      {card.issuerName} {card.name}
+                    </p>
+                    {card.tagline && <p className={styles.tagline}>{card.tagline}</p>}
+                    {card.annualFee === 0 && card.feeWaiverNote && (
+                      <p className={styles.feeNote}>{card.feeWaiverNote}</p>
+                    )}
+                  </div>
+                  <div className={styles.numbers}>
+                    <div className={styles.feeCol}>
+                      <span className={styles.rateValue}>
+                        {card.annualFee === 0 ? 'Free' : `${card.currency}${card.annualFee.toLocaleString()}`}
+                      </span>
+                      <span className={styles.feeValue}>per year</span>
+                    </div>
+                    <div className={styles.rateCol}>
+                      <span className={styles.rateValue}>
+                        {card.rewardRate}
+                        {card.rewardType === 'cashback_pct' ? '%' : '\u00d7'}
+                      </span>
+                      <span className={styles.rateLabel}>{category}</span>
+                    </div>
+                  </div>
+                  <a
+                    href={`/api/apply/${card.id}?category=${encodeURIComponent(category)}&feeTier=${
+                      searchParams.feeTier ?? ''
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    className={styles.applyLink}
+                  >
+                    Apply Now
+                  </a>
+                </div>
+              ))
+            )}
+
+            <p className={styles.disclosure}>
+              MileZen may earn a commission if you apply for a card through these links, at no
+              cost to you. This never affects which cards are shown or how they're ranked.
+            </p>
+          </>
+        )}
+      </div>
+    </div>
   );
 }

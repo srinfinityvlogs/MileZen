@@ -14,7 +14,7 @@ interface CardOption {
   mccRules: MccRule[];
 }
 
-const COMMON_CATEGORIES = ['Dining', 'Groceries', 'Travel', 'Other'];
+const COMMON_CATEGORIES = ['Dining', 'Groceries', 'Travel', 'Fuel', 'Online Shopping', 'Utilities', 'Entertainment', 'Other'];
 
 export function NewTransactionForm({ cards }: { cards: CardOption[] }) {
   const router = useRouter();

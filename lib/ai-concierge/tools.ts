@@ -17,6 +17,20 @@ const CATEGORY_SYNONYMS: Record<string, string> = {
   airfare: 'travel',
   hotels: 'travel',
   hotel: 'travel',
+  petrol: 'fuel',
+  gas: 'fuel',
+  'gas station': 'fuel',
+  'petrol pump': 'fuel',
+  shopping: 'online shopping',
+  ecommerce: 'online shopping',
+  amazon: 'online shopping',
+  flipkart: 'online shopping',
+  bills: 'utilities',
+  'bill payment': 'utilities',
+  electricity: 'utilities',
+  movies: 'entertainment',
+  streaming: 'entertainment',
+  ott: 'entertainment',
 };
 
 function normalizeCategory(raw: string): string {
@@ -79,7 +93,7 @@ export const CONCIERGE_TOOLS = [
     function: {
       name: 'get_card_recommendation',
       description:
-        "Given a spend category or merchant type, return the user's own cards ranked by reward rate for that category — answers 'which card should I swipe'. Common categories: Dining, Groceries, Travel.",
+        "Given a spend category or merchant type, return the user's own cards ranked by reward rate for that category — answers 'which card should I swipe'. Common categories: Dining, Groceries, Travel, Fuel, Online Shopping, Utilities, Entertainment.",
       parameters: {
         type: 'object',
         properties: {
