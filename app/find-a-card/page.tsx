@@ -186,17 +186,9 @@ export default async function FindACardPage({
             ) : (
               results.map((card, i) => (
                 <div key={card.id} className={styles.row}>
-                  {i === 0 && (
-                    <div className={styles.stamp} aria-hidden="true">
-                      <span className={styles.stampText}>
-                        Top
-                        <br />
-                        Pick
-                      </span>
-                    </div>
-                  )}
                   <span className={styles.rank}>{String(i + 1).padStart(2, '0')}</span>
                   <div className={styles.cardInfo}>
+                    {i === 0 && <span className={styles.topPickBadge}>Top Pick</span>}
                     <p className={styles.cardName}>
                       {card.issuerName} {card.name}
                     </p>

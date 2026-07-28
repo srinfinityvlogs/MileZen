@@ -220,30 +220,25 @@
   background: var(--accent-dark);
 }
 
-/* --- signature element: the top-pick stamp --- */
-.stamp {
-  position: absolute;
-  top: -6px;
-  right: 4px;
-  width: 76px;
-  height: 76px;
-  border: 2px dashed var(--brass);
-  border-radius: 50%;
-  display: flex;
+/* --- signature element: top-pick badge --- */
+/* Deliberately NOT absolutely positioned — an earlier version overlapped
+   the Apply Now button on wide rows. This flows inline above the card
+   name instead, so it can never collide with anything regardless of
+   row width or content length. */
+.topPickBadge {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transform: rotate(-8deg);
-  pointer-events: none;
-}
-.stampText {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--brass);
-  text-align: center;
-  line-height: 1.3;
+  border: 1.5px dashed var(--brass);
+  border-radius: 999px;
+  padding: 3px 10px;
+  transform: rotate(-2deg);
+  margin-bottom: 6px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -284,7 +279,6 @@
   .feeCol,
   .rateCol { text-align: left; }
   .applyLink { grid-area: apply; justify-self: start; }
-  .stamp { width: 60px; height: 60px; top: -4px; right: 0; }
   .form { flex-direction: column; align-items: stretch; }
   .select { min-width: 0; width: 100%; }
 }
