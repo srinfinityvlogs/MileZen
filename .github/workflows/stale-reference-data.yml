@@ -8,6 +8,15 @@ on:
     - cron: '0 9 * * 1'   # every Monday 09:00 UTC
   workflow_dispatch: {}     # allow manual trigger too
 
+# GitHub's default GITHUB_TOKEN is read-only on most repos now — this
+# workflow needs to actually open an issue when data goes stale, so that
+# permission has to be declared explicitly rather than relying on a
+# repo-wide "read and write" setting (keeps this scoped to just what this
+# one workflow needs).
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   stale-check:
     runs-on: ubuntu-latest
