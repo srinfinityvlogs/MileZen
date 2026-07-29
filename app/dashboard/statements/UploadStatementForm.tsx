@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import styles from '../dashboard.module.css';
 
 interface CardOption {
   id: string;
@@ -64,43 +65,38 @@ export function UploadStatementForm({ cards }: { cards: CardOption[] }) {
   const busy = phase === 'uploading' || phase === 'parsing';
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <label>
-        Card this statement belongs to
-        <select
-          value={userCardId}
-          onChange={(e) => setUserCardId(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: 8 }}
-        >
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="userCard">Card this statement belongs to</label>
+        <select id="userCard" value={userCardId} onChange={(e) => setUserCardId(e.target.value)} className={styles.select}>
           {cards.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
             </option>
           ))}
         </select>
-      </label>
+      </div>
 
-      <label>
-        Statement PDF (max 10 MB)
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="file">Statement PDF (max 10 MB)</label>
         <input
+          id="file"
           type="file"
           accept="application/pdf"
           onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+      </div>
 
-      <button type="submit" disabled={!file || busy}>
+      <button type="submit" disabled={!file || busy} className={styles.button}>
         {phase === 'uploading' ? 'Uploading…' : phase === 'parsing' ? 'Parsing…' : 'Upload & parse'}
       </button>
 
-      {message && (
-        <p style={{ color: phase === 'error' ? 'crimson' : 'seagreen' }}>{message}</p>
-      )}
+      {message && <p className={phase === 'error' ? styles.errorText : styles.successText}>{message}</p>}
 
-      <p style={{ fontSize: 12, color: '#666' }}>
-        Only text-layer extraction + pattern matching is used to read this file - nothing is sent to
-        any AI model or third party during parsing.
+      <p className={styles.helpText}>
+        Only text-layer extraction + pattern matching is used to read this file — nothing is sent
+        to any AI model or third party during parsing.
       </p>
     </form>
   );

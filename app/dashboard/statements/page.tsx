@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { UploadStatementForm } from './UploadStatementForm';
+import styles from '../dashboard.module.css';
 
 export default async function StatementsPage() {
   const supabase = await createClient();
@@ -22,13 +23,26 @@ export default async function StatementsPage() {
     console.error('Failed to load statements', statementsError.message);
   }
 
+  function statusBadgeClass(status: string) {
+    if (status === 'parsed') return `${styles.badge} ${styles.badgeSuccess}`;
+    if (status === 'failed') return `${styles.badge} ${styles.badgeDanger}`;
+    return `${styles.badge} ${styles.badgeMuted}`;
+  }
+
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 640 }}>
-      <h1>Statements</h1>
+    <main className={styles.main}>
+      <h1 className={styles.title}>Statements</h1>
+      <p className={styles.subtitle}>
+        Optional PDF import — text-layer extraction + regex only, nothing sent to any AI model.
+      </p>
 
       {!cards || cards.length === 0 ? (
-        <p>
-          Add a card first before uploading a statement - <a href="/dashboard/cards/new">add one here</a>.
+        <p className={styles.empty}>
+          Add a card first before uploading a statement —{' '}
+          <a href="/dashboard/cards/new" className={styles.linkButton} style={{ marginTop: 0 }}>
+            add one here
+          </a>
+          .
         </p>
       ) : (
         <UploadStatementForm
@@ -39,22 +53,20 @@ export default async function StatementsPage() {
         />
       )}
 
-      <h2 style={{ marginTop: 32, fontSize: 18 }}>History</h2>
+      <h2 className={styles.sectionTitle}>History</h2>
       {!statements || statements.length === 0 ? (
-        <p>No statements uploaded yet.</p>
+        <p className={styles.empty}>No statements uploaded yet.</p>
       ) : (
-        <ul>
+        <ul className={styles.list}>
           {statements.map((s: any) => (
-            <li key={s.id} style={{ marginBottom: 8 }}>
-              {new Date(s.uploaded_at).toLocaleDateString()} -{' '}
-              {s.user_cards ? `${s.user_cards.nickname ?? ''} •••• ${s.user_cards.last4}` : 'No card linked'} -{' '}
-              <strong
-                style={{
-                  color: s.status === 'parsed' ? 'seagreen' : s.status === 'failed' ? 'crimson' : '#999',
-                }}
-              >
-                {s.status}
-              </strong>
+            <li key={s.id} className={styles.row}>
+              <div className={styles.rowMain}>
+                <p className={styles.rowTitle}>
+                  {s.user_cards ? `${s.user_cards.nickname ?? ''} •••• ${s.user_cards.last4}` : 'No card linked'}
+                </p>
+                <p className={styles.rowMeta}>{new Date(s.uploaded_at).toLocaleDateString()}</p>
+              </div>
+              <span className={statusBadgeClass(s.status)}>{s.status}</span>
             </li>
           ))}
         </ul>

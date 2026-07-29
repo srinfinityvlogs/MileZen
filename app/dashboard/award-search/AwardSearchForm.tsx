@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import styles from '../dashboard.module.css';
 
 interface AwardOption {
   programmeId: string;
@@ -61,114 +62,123 @@ export function AwardSearchForm({
 
   return (
     <>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <label>
-          From
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.field}>
+          <label className={styles.fieldLabel} htmlFor="originRegion">From</label>
           <input
+            id="originRegion"
             list="origin-regions"
             value={originRegion}
             onChange={(e) => setOriginRegion(e.target.value)}
             placeholder="e.g. North India"
             required
-            style={{ display: 'block', width: '100%', padding: 8 }}
+            className={styles.input}
           />
           <datalist id="origin-regions">
             {originRegions.map((r) => (
               <option key={r} value={r} />
             ))}
           </datalist>
-        </label>
+        </div>
 
-        <label>
-          To
+        <div className={styles.field}>
+          <label className={styles.fieldLabel} htmlFor="destRegion">To</label>
           <input
+            id="destRegion"
             list="dest-regions"
             value={destRegion}
             onChange={(e) => setDestRegion(e.target.value)}
             placeholder="e.g. UK"
             required
-            style={{ display: 'block', width: '100%', padding: 8 }}
+            className={styles.input}
           />
           <datalist id="dest-regions">
             {destRegions.map((r) => (
               <option key={r} value={r} />
             ))}
           </datalist>
-        </label>
+        </div>
 
-        <label>
-          Cabin
-          <select value={cabin} onChange={(e) => setCabin(e.target.value)} style={{ display: 'block', width: '100%', padding: 8 }}>
+        <div className={styles.field}>
+          <label className={styles.fieldLabel} htmlFor="cabin">Cabin</label>
+          <select id="cabin" value={cabin} onChange={(e) => setCabin(e.target.value)} className={styles.select}>
             {CABINS.map((c) => (
               <option key={c} value={c}>
                 {c.replace('_', ' ')}
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <fieldset style={{ border: '1px solid #ddd', padding: 8 }}>
-          <legend>Rank paths by</legend>
-          {STRATEGIES.map((s) => (
-            <label key={s.value} style={{ marginRight: 16 }}>
-              <input
-                type="radio"
-                name="strategy"
-                value={s.value}
-                checked={strategy === s.value}
-                onChange={() => setStrategy(s.value)}
-              />{' '}
-              {s.label}
-            </label>
-          ))}
-        </fieldset>
+        <div className={styles.field}>
+          <span className={styles.fieldLabel}>Rank paths by</span>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            {STRATEGIES.map((s) => (
+              <label key={s.value} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 14 }}>
+                <input
+                  type="radio"
+                  name="strategy"
+                  value={s.value}
+                  checked={strategy === s.value}
+                  onChange={() => setStrategy(s.value)}
+                />
+                {s.label}
+              </label>
+            ))}
+          </div>
+        </div>
 
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className={styles.button}>
           {loading ? 'Searching…' : 'Search'}
         </button>
       </form>
 
-      {error && <p style={{ color: 'crimson', marginTop: 16 }}>{error}</p>}
+      {error && <p className={styles.errorText}>{error}</p>}
 
       {options && (
-        <div style={{ marginTop: 24 }}>
-          <h2 style={{ fontSize: 18 }}>Results</h2>
+        <>
+          <h2 className={styles.sectionTitle}>Results</h2>
           {options.length === 0 ? (
-            <p>No programmes have a chart for this exact route/cabin yet.</p>
+            <p className={styles.empty}>No programmes have a chart for this exact route/cabin yet.</p>
           ) : (
-            options.map((opt) => (
-              <div key={opt.programmeId} style={{ border: '1px solid #eee', padding: 16, marginBottom: 12 }}>
-                <strong>{opt.programmeName}</strong> - {opt.pointsCost.toLocaleString()} pts
-                {opt.alreadyBookable && (
-                  <span style={{ color: 'seagreen', marginLeft: 8 }}>✓ You can book this now</span>
-                )}
+            <ul className={styles.list}>
+              {options.map((opt) => (
+                <li key={opt.programmeId} className={styles.row} style={{ display: 'block' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <p className={styles.rowTitle}>{opt.programmeName}</p>
+                    <span className={styles.rowValue}>{opt.pointsCost.toLocaleString()} pts</span>
+                  </div>
+                  {opt.alreadyBookable && (
+                    <span className={`${styles.badge} ${styles.badgeSuccess}`}>You can book this now</span>
+                  )}
 
-                {opt.paths.length === 0 ? (
-                  <p style={{ color: '#999', marginTop: 8 }}>
-                    No path found from currencies you currently hold.
-                  </p>
-                ) : (
-                  <ul style={{ marginTop: 8 }}>
-                    {opt.paths.map((p, i) => (
-                      <li key={i}>
-                        From <strong>{p.sourceProgrammeName}</strong>: need{' '}
-                        {p.sourcePointsNeeded.toLocaleString()} pts
-                        {p.hopCount > 0 && (
-                          <>
-                            {' '}
-                            via {p.hops.map((h) => h.toProgrammeName).join(' → ')} ({p.hopCount} hop
-                            {p.hopCount > 1 ? 's' : ''}, ~{p.totalMaxDays} days)
-                          </>
-                        )}
-                        {p.hopCount === 0 && ' (already held directly)'}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))
+                  {opt.paths.length === 0 ? (
+                    <p className={styles.rowMeta} style={{ marginTop: 8 }}>
+                      No path found from currencies you currently hold.
+                    </p>
+                  ) : (
+                    <ul style={{ marginTop: 8, paddingLeft: 0, listStyle: 'none' }}>
+                      {opt.paths.map((p, i) => (
+                        <li key={i} className={styles.rowMeta} style={{ marginBottom: 4 }}>
+                          From <strong style={{ color: 'var(--dz-ink, #14213d)' }}>{p.sourceProgrammeName}</strong>:
+                          need {p.sourcePointsNeeded.toLocaleString()} pts
+                          {p.hopCount > 0 && (
+                            <>
+                              {' '}
+                              via {p.hops.map((h) => h.toProgrammeName).join(' → ')} ({p.hopCount} hop
+                              {p.hopCount > 1 ? 's' : ''}, ~{p.totalMaxDays} days)
+                            </>
+                          )}
+                          {p.hopCount === 0 && ' (already held directly)'}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
           )}
-        </div>
+        </>
       )}
     </>
   );

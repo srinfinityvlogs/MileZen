@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import styles from './dashboard.module.css';
 
 // Server Component — data is fetched on the server, using the signed-in
 // user's own session (not the service role). Notice there is NO manual
@@ -43,51 +44,49 @@ export default async function DashboardPage() {
     console.error('Failed to load point_balances', balancesError.message);
   }
 
+  const positiveBalances = (balances ?? []).filter((b: any) => b.balance && b.balance > 0);
+
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui' }}>
-      <h1>Your balances</h1>
-      {!balances || balances.length === 0 ? (
-        <p>No points logged yet - log a transaction with points earned to see balances here.</p>
+    <main className={styles.main}>
+      <h1 className={styles.title}>Your balances</h1>
+      <p className={styles.subtitle}>Every card, point, and mile — in one ledger.</p>
+
+      {positiveBalances.length === 0 ? (
+        <p className={styles.empty}>No points logged yet — log a transaction with points earned to see balances here.</p>
       ) : (
-        <ul>
-          {balances
-            .filter((b: any) => b.balance && b.balance > 0)
-            .map((b: any) => (
-              <li key={b.programme_id}>
-                <strong>{b.programmes?.name ?? 'Unknown programme'}</strong> - {b.balance.toLocaleString()} pts
-              </li>
-            ))}
-        </ul>
+        <div className={styles.statGrid}>
+          {positiveBalances.map((b: any) => (
+            <div key={b.programme_id} className={styles.statTile}>
+              <p className={styles.statLabel}>{b.programmes?.name ?? 'Unknown programme'}</p>
+              <p className={styles.statValue}>{b.balance.toLocaleString()}</p>
+            </div>
+          ))}
+        </div>
       )}
 
-      <h1 style={{ marginTop: 32 }}>Your cards</h1>
+      <h2 className={styles.sectionTitle}>Your cards</h2>
       {!cards || cards.length === 0 ? (
-        <p>No cards yet. Add your first card to start the ledger.</p>
+        <p className={styles.empty}>No cards yet. Add your first card to start the ledger.</p>
       ) : (
-        <ul>
+        <ul className={styles.list}>
           {cards.map((c: any) => (
-            <li key={c.id}>
-              {c.nickname ?? c.card_products?.name ?? 'Card'} •••• {c.last4}
-              {c.annual_fee_date ? ` - annual fee due ${c.annual_fee_date}` : ''}
+            <li key={c.id} className={styles.row}>
+              <div className={styles.rowMain}>
+                <p className={styles.rowTitle}>
+                  {c.nickname ?? c.card_products?.name ?? 'Card'} •••• {c.last4}
+                </p>
+                {c.annual_fee_date && (
+                  <p className={styles.rowMeta}>Annual fee due {c.annual_fee_date}</p>
+                )}
+              </div>
             </li>
           ))}
         </ul>
       )}
-      <p style={{ marginTop: 16 }}>
-        <Link href="/dashboard/cards/new">+ Add a card</Link>
-      </p>
-      <p>
-        <Link href="/dashboard/transactions">+ Log a transaction</Link>
-      </p>
-      <p>
-        <Link href="/dashboard/concierge">Ask the concierge</Link>
-      </p>
-      <p>
-        <Link href="/dashboard/statements">Statements (optional PDF import)</Link>
-      </p>
-      <p>
-        <Link href="/dashboard/award-search">Award search</Link>
-      </p>
+
+      <Link href="/dashboard/cards/new" className={styles.linkButton}>
+        + Add a card
+      </Link>
     </main>
   );
 }

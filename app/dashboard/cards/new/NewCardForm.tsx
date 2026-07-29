@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import styles from '../../dashboard.module.css';
 
 interface CardProductOption {
   id: string;
@@ -46,13 +47,14 @@ export function NewCardForm({ cardProducts }: { cardProducts: CardProductOption[
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <label>
-        Card
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="cardProduct">Card</label>
         <select
+          id="cardProduct"
           value={cardProductId}
           onChange={(e) => setCardProductId(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.select}
         >
           {cardProducts.map((cp) => (
             <option key={cp.id} value={cp.id}>
@@ -60,44 +62,50 @@ export function NewCardForm({ cardProducts }: { cardProducts: CardProductOption[
             </option>
           ))}
         </select>
-      </label>
+      </div>
 
-      <label>
-        Nickname (optional)
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="nickname">Nickname (optional)</label>
         <input
+          id="nickname"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
           placeholder="e.g. My travel card"
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+      </div>
 
-      <label>
-        Last 4 digits
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="last4">Last 4 digits</label>
         <input
+          id="last4"
           value={last4}
           onChange={(e) => setLast4(e.target.value.replace(/\D/g, '').slice(0, 4))}
           placeholder="1234"
           inputMode="numeric"
           maxLength={4}
           required
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+      </div>
 
-      <label>
-        Annual fee due date (optional - sets a reminder automatically)
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="annualFeeDate">
+          Annual fee due date
+        </label>
         <input
+          id="annualFeeDate"
           type="date"
           value={annualFeeDate}
           onChange={(e) => setAnnualFeeDate(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+        <span className={styles.helpText}>Optional — sets a reminder automatically</span>
+      </div>
 
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {error && <p className={styles.errorText}>{error}</p>}
 
-      <button type="submit" disabled={saving || !cardProductId || last4.length !== 4}>
+      <button type="submit" disabled={saving || !cardProductId || last4.length !== 4} className={styles.button}>
         {saving ? 'Adding…' : 'Add card'}
       </button>
     </form>

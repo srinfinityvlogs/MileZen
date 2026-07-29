@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { NewTransactionForm } from './NewTransactionForm';
+import styles from '../dashboard.module.css';
 
 export default async function TransactionsPage() {
   const supabase = await createClient();
@@ -24,17 +25,23 @@ export default async function TransactionsPage() {
   if (txnError) console.error('Failed to load transactions', txnError.message);
 
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 640 }}>
-      <h1>Transactions</h1>
-      <p style={{ color: '#666', fontSize: 14 }}>
-        Manual entry is the primary way to log spending - statement upload (under{' '}
-        <a href="/dashboard/statements">Statements</a>) is available too, but only recognizes a
-        couple of bank formats so far.
+    <main className={styles.main}>
+      <h1 className={styles.title}>Transactions</h1>
+      <p className={styles.subtitle}>
+        Manual entry is the primary way to log spending — statement upload (under{' '}
+        <a href="/dashboard/statements" className={styles.linkButton} style={{ marginTop: 0 }}>
+          Statements
+        </a>
+        ) is available too, but only recognizes a couple of bank formats so far.
       </p>
 
       {!cards || cards.length === 0 ? (
-        <p>
-          Add a card first - <a href="/dashboard/cards/new">add one here</a>.
+        <p className={styles.empty}>
+          Add a card first —{' '}
+          <a href="/dashboard/cards/new" className={styles.linkButton} style={{ marginTop: 0 }}>
+            add one here
+          </a>
+          .
         </p>
       ) : (
         <NewTransactionForm
@@ -50,17 +57,29 @@ export default async function TransactionsPage() {
         />
       )}
 
-      <h2 style={{ marginTop: 32, fontSize: 18 }}>Recent</h2>
+      <h2 className={styles.sectionTitle}>Recent</h2>
       {!transactions || transactions.length === 0 ? (
-        <p>No transactions logged yet.</p>
+        <p className={styles.empty}>No transactions logged yet.</p>
       ) : (
-        <ul>
+        <ul className={styles.list}>
           {transactions.map((t: any) => (
-            <li key={t.id} style={{ marginBottom: 6 }}>
-              {t.txn_date} - {t.merchant} - {t.currency} {t.amount}
-              {t.category_note ? ` (${t.category_note})` : ''}
-              {t.points_earned ? ` - ${t.points_earned} pts` : ''}
-              {t.user_cards ? ` - ${t.user_cards.nickname ?? ''} •••• ${t.user_cards.last4}` : ''}
+            <li key={t.id} className={styles.row}>
+              <div className={styles.rowMain}>
+                <p className={styles.rowTitle}>{t.merchant}</p>
+                <p className={styles.rowMeta}>
+                  {t.txn_date}
+                  {t.category_note ? ` · ${t.category_note}` : ''}
+                  {t.user_cards ? ` · ${t.user_cards.nickname ?? ''} •••• ${t.user_cards.last4}` : ''}
+                </p>
+              </div>
+              <div className={styles.rowValue}>
+                {t.currency} {t.amount}
+                {t.points_earned ? (
+                  <div style={{ fontSize: 12, fontWeight: 400, color: '#17543f' }}>
+                    +{t.points_earned} pts
+                  </div>
+                ) : null}
+              </div>
             </li>
           ))}
         </ul>

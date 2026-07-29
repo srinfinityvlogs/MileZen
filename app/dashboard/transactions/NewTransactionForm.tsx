@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import styles from '../dashboard.module.css';
 
 interface MccRule {
   label: string;
@@ -77,75 +78,73 @@ export function NewTransactionForm({ cards }: { cards: CardOption[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <label>
-        Card
-        <select
-          value={userCardId}
-          onChange={(e) => setUserCardId(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: 8 }}
-        >
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="userCard">Card</label>
+        <select id="userCard" value={userCardId} onChange={(e) => setUserCardId(e.target.value)} className={styles.select}>
           {cards.map((c) => (
             <option key={c.id} value={c.id}>
               {c.label}
             </option>
           ))}
         </select>
-      </label>
+      </div>
 
-      <label>
-        Date
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="txnDate">Date</label>
         <input
+          id="txnDate"
           type="date"
           value={txnDate}
           onChange={(e) => setTxnDate(e.target.value)}
           required
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+      </div>
 
-      <label>
-        Merchant
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="merchant">Merchant</label>
         <input
+          id="merchant"
           value={merchant}
           onChange={(e) => setMerchant(e.target.value)}
           placeholder="e.g. Starbucks"
           required
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+      </div>
 
-      <label>
-        Amount
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="amount">Amount</label>
         <input
+          id="amount"
           type="number"
           step="0.01"
           min="0.01"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           required
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+      </div>
 
-      <label>
-        Category
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: 8 }}
-        >
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="category">Category</label>
+        <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} className={styles.select}>
           {COMMON_CATEGORIES.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
           ))}
         </select>
-      </label>
+      </div>
 
-      <label>
-        Points earned {suggestedPoints !== null && !pointsTouchedByUser ? '(auto-suggested - edit if needed)' : '(optional)'}
+      <div className={styles.field}>
+        <label className={styles.fieldLabel} htmlFor="pointsEarned">
+          Points earned
+        </label>
         <input
+          id="pointsEarned"
           type="number"
           value={displayedPoints}
           onChange={(e) => {
@@ -153,13 +152,16 @@ export function NewTransactionForm({ cards }: { cards: CardOption[] }) {
             setPointsEarned(e.target.value);
           }}
           placeholder="0"
-          style={{ display: 'block', width: '100%', padding: 8 }}
+          className={styles.input}
         />
-      </label>
+        <span className={styles.helpText}>
+          {suggestedPoints !== null && !pointsTouchedByUser ? 'Auto-suggested — edit if needed' : 'Optional'}
+        </span>
+      </div>
 
-      {error && <p style={{ color: 'crimson' }}>{error}</p>}
+      {error && <p className={styles.errorText}>{error}</p>}
 
-      <button type="submit" disabled={saving || !userCardId || !merchant || !amount}>
+      <button type="submit" disabled={saving || !userCardId || !merchant || !amount} className={styles.button}>
         {saving ? 'Saving…' : 'Add transaction'}
       </button>
     </form>

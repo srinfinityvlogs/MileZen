@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { NewCardForm } from './NewCardForm';
+import styles from '../../dashboard.module.css';
 
 export default async function NewCardPage() {
   const supabase = await createClient();
@@ -24,14 +25,15 @@ export default async function NewCardPage() {
   }
 
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 480 }}>
-      <h1>Add a card</h1>
+    <main className={styles.main}>
+      <h1 className={styles.title}>Add a card</h1>
+      <p className={styles.subtitle}>Pick a card from the catalog and add your own instance of it.</p>
       {error ? (
-        <p style={{ color: 'crimson' }}>
+        <p className={styles.errorText}>
           Could not load the card catalog. Check your terminal for the exact error.
         </p>
       ) : !cardProducts || cardProducts.length === 0 ? (
-        <p>
+        <p className={styles.empty}>
           No card products in the catalog yet. Run <code>npm run ingest:reference</code> after
           populating <code>data/card-products.json</code> (see README).
         </p>

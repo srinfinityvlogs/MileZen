@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import styles from '../dashboard.module.css';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -44,31 +45,36 @@ export default function ConciergePage() {
   }
 
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 600 }}>
-      <h1>MileZen concierge</h1>
-      <p style={{ color: '#666', fontSize: 14 }}>
+    <main className={styles.main}>
+      <h1 className={styles.title}>MileZen concierge</h1>
+      <p className={styles.subtitle}>
         Ask about your balances, which card to swipe, or how to fly somewhere on points.
       </p>
 
-      <div style={{ marginTop: 24, marginBottom: 16 }}>
+      <div className={styles.chatWindow}>
+        {messages.length === 0 && !loading && (
+          <p className={styles.chatThinking}>Ask something to get started.</p>
+        )}
         {messages.map((m, i) => (
-          <div key={i} style={{ marginBottom: 12 }}>
-            <strong>{m.role === 'user' ? 'You' : 'MileZen'}:</strong>
-            <p style={{ margin: '4px 0', whiteSpace: 'pre-wrap' }}>{m.content}</p>
+          <div key={i} className={styles.chatMessage}>
+            <p className={`${styles.chatRole} ${m.role === 'assistant' ? styles.chatRoleAssistant : ''}`}>
+              {m.role === 'user' ? 'You' : 'MileZen'}
+            </p>
+            <p className={styles.chatText}>{m.content}</p>
           </div>
         ))}
-        {loading && <p style={{ color: '#999' }}>Thinking…</p>}
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
+        {loading && <p className={styles.chatThinking}>Thinking…</p>}
+        {error && <p className={styles.errorText}>{error}</p>}
       </div>
 
-      <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
+      <form onSubmit={sendMessage} className={styles.chatInputRow}>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="e.g. Which card should I use for dining?"
-          style={{ flex: 1, padding: 8 }}
+          className={styles.input}
         />
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className={styles.button}>
           Send
         </button>
       </form>
