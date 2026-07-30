@@ -16,7 +16,7 @@ The operating system for your cards, points, and miles.
    URL/keys (Project Settings → API) — see **Setup** below for the full list.
 3. In Supabase's SQL editor: run `supabase/schema.sql`, then
    `supabase/storage_policies.sql`, then each file in
-   `supabase/migrations/` in order (002 → 003 → 004 → 005 → 006 → 007 → 008).
+   `supabase/migrations/` in order (002 → 003 → 004 → 005 → 006 → 007 → 008 → 009 → 010 → 011 → 012 → 013).
 4. `npm install`
 5. `npm run dev` — if you edit `.env.local` while the server is already
    running, stop it (Ctrl+C) and restart; Next.js only reads env files at
@@ -26,17 +26,20 @@ The operating system for your cards, points, and miles.
 
 1. Create a free project at supabase.com.
 2. In the SQL editor, run `supabase/schema.sql`, then each file under
-   `supabase/migrations/` in numeric order (002, 003, 004, 005, 006, 007, 008) — together
+   `supabase/migrations/` in numeric order (002 through 013) — together
    these create every table, RLS policy, and trigger.
 
    **If your project has Supabase's "Enable automatic RLS" project
-   setting turned on**, it force-enables RLS (with zero policies) on
-   every new table — including the six global reference tables this
-   schema deliberately leaves RLS-off for (they use plain `GRANT`/`REVOKE`
-   instead — see schema.sql section 5). That combination makes queries
-   against those tables silently return zero rows, no error. Migration
-   `005_disable_rls_reference_tables.sql` corrects this — make sure you
-   run it, and if you ever recreate these tables, re-run it.
+   setting turned on**, it force-enables RLS *with zero policies* the
+   moment a table is created — which, on the six global reference tables
+   (issuers, programmes, transfer_partners, card_products, award_charts,
+   mcc_rules), makes every query against them silently return zero rows
+   between `schema.sql` running and migration 010 adding the real
+   public-read policies. Just make sure you run every migration file,
+   including 005 and 010, in order — the final state after 010 has RLS
+   properly enabled on these tables with explicit read policies (not
+   left RLS-off as originally designed — see "Security notes" below for
+   why that changed).
 3. In Supabase Auth settings, enable **Email OTP (magic link)** sign-in.
    Disable password-based sign-in unless you specifically want it — fewer
    credentials to protect.
@@ -102,6 +105,46 @@ as the codebase grows:
   forget and won't error — it'll just silently leak cross-user data. Test
   every new view the same way: sign in as one user, query it, and confirm
   you never see another user's rows.
+- **Global reference tables (issuers, programmes, transfer_partners,
+  card_products, award_charts, mcc_rules) have RLS enabled with an
+  explicit public-read policy** (migration 010), not left RLS-off relying
+  on GRANT/REVOKE alone as originally designed. Two reasons: Supabase's
+  own security linter flags any public table without RLS as an
+  ERROR-level finding regardless of intent, and — more importantly — this
+  project already hit a real incident (migration 005) where a Supabase
+  project-level setting silently force-enabled RLS on these same tables
+  with zero policies, breaking every query against them. Depending on RLS
+  staying *off* turned out to be fragile against something outside this
+  repo's own SQL. RLS-on-with-an-explicit-policy achieves identical
+  access but can't silently regress the same way.
+- **Trigger-only functions must have EXECUTE revoked from `anon`/
+  `authenticated`** (migration 011). `handle_new_user()` and
+  `sync_annual_fee_reminder()` are SECURITY DEFINER functions meant to
+  run only as triggers — but Postgres/PostgREST exposes every function in
+  the `public` schema as a directly-callable RPC endpoint by default.
+  Revoking EXECUTE closes that off without breaking the triggers
+  themselves (trigger firing doesn't go through the calling role's
+  EXECUTE privilege check the way a direct call would). Any future
+  SECURITY DEFINER trigger function needs the same treatment.
+- **Enable "Leaked Password Protection"** in Supabase → Authentication →
+  Policies (checks new passwords against HaveIBeenPwned). This is a
+  dashboard toggle, not something a migration can set. Since this app is
+  magic-link-only by design (see the auth section above — deliberately no
+  password field anywhere in the UI), this mostly matters as defense in
+  depth in case Supabase's password-based sign-in is still reachable via
+  direct API calls even without a UI exposing it; consider disabling
+  email+password sign-in entirely under Authentication → Providers if
+  it's genuinely unused.
+- **`rls_auto_enable()`** (if flagged by the linter) is not defined
+  anywhere in this project's own SQL — it's Supabase's internal
+  implementation of the "Enable automatic RLS" project setting. Migration
+  012 revokes public RPC access to it (same treatment as our own trigger
+  functions in migration 011), which resolves the lint without needing to
+  know or modify the function's actual body. This project no longer
+  depends on that setting — every table's RLS state is now managed
+  explicitly — so turning it off entirely in the dashboard is also a
+  reasonable option if you'd rather remove the function's presence
+  altogether.
 
 ## Statement parsing pipeline
 
@@ -188,11 +231,41 @@ Design choices worth knowing about:
   currency — an Amex point and a cashback point aren't fungible, so the
   response groups paths per target programme rather than flattening
   everything into one global ranking.
-- `transfer_partners`/`award_charts` are global reference data (no RLS —
-  see schema.sql), while balances come from the RLS-scoped `point_balances`
-  view, so this route can never see another user's holdings.
+- `transfer_partners`/`award_charts` are global reference data (RLS
+  enabled with an explicit public-read policy as of migration 010 — see
+  the "Security notes" section above for why), while balances come from
+  the RLS-scoped `point_balances` view, so this route can never see
+  another user's holdings.
 - Run `supabase/migrations/002_transfer_speed_days.sql` after the main
   schema — it adds the numeric field the "fastest" ranking sorts on.
+
+## Redeem your miles (public award route chart)
+
+`/redeem-miles` — a second public, no-login tool, same design intent as
+`/find-a-card`: server-rendered, bookmarkable/crawlable URLs
+(`/redeem-miles?from=DEL&country=UK&sort=points`), no client-side fetch.
+
+**Different data shape than the existing award-search feature on
+purpose.** `/dashboard/award-search` (private, logged-in) works off
+broad regions ("North India" → "UK") because it's answering "which of
+150+ programmes can fly this route, using points I actually hold." This
+page answers a narrower, more concrete question — "how many points and
+taxes does Air India's Maharaja Club actually charge from DEL to LHR" —
+which needed real airport-pair granularity and separate onward/return
+taxes, not a region-level abstraction. Rather than force that into the
+existing `award_charts` table, it has its own table
+(`award_route_charts`, migration 013) and its own reference-data file
+shape (`data/award-route-charts/*.json`, validated by
+`AwardRouteChartFileSchema`) — same ingestion pipeline
+(`npm run ingest:reference`), same RLS-enabled-with-public-read-policy
+pattern as every other reference table (migration 010's lesson applied
+from the start this time, not retrofitted).
+
+**Adding another programme's chart later**: copy
+`data/award-route-charts/maharaja-club.json` as a template, add the
+programme to `data/programmes.json` if it's new, re-run ingestion. The
+page already queries across all programmes in the table — no code change
+needed for a second airline's chart to show up.
 
 ## Find a card (public, affiliate-driven card search)
 
@@ -232,67 +305,6 @@ within budget, each with an "Apply Now" affiliate link.
 `npm run ingest:reference` pipeline as everything else — add
 `affiliateLink`/`tagline`/`feeWaiverNote` to a card entry and re-run
 ingestion.
-
-## Award engine: rate-chart ingestion & maintenance
-
-This is the part that's actually hard — not the code, the data. Getting
-150+ programmes' award charts and transfer ratios right, and keeping them
-right as banks devalue and change terms, is a content-curation problem.
-The pipeline below treats it that way.
-
-### How it works
-
-1. **Data lives in git, not typed into a database by hand.** `data/programmes.yaml`
-   is the base catalog (issuers, programmes, card products). `data/transfer-partners.yaml`
-   holds transfer edges. `data/award-charts/*.yaml` — one file per
-   programme — holds redemption costs by route/cabin. Everything
-   references everything else **by name**, never by UUID, so a
-   contributor opening a PR never needs database access to propose a
-   change.
-2. **`npm run validate:data`** runs on every PR that touches `data/**`
-   (see `.github/workflows/data-pipeline.yml`). It checks every reference
-   resolves (no typo'd programme names), flags duplicate route/cabin
-   entries, and warns (without failing) on anything older than 180 days
-   (`STALENESS_THRESHOLD_DAYS` in `scripts/lib/schemas.ts`). This step
-   needs no secrets, so it's safe to run on a PR from any contributor,
-   including forks.
-3. **`npm run sync:data`** runs only after merge to `main`, using the
-   service-role key (as a GitHub Actions secret, never exposed to PRs).
-   It resolves names to UUIDs and upserts into Supabase, in dependency
-   order: issuers → programmes → card_products → transfer_partners →
-   award_charts. This is the **only** place in the codebase that writes
-   to those tables — the app's own API routes only ever read them
-   (enforced by the `revoke insert, update, delete ... from authenticated`
-   statements in `schema.sql`).
-4. **Nothing is silently overwritten.** `supabase/migrations/003_reference_data_history.sql`
-   adds a trigger that snapshots the old row into `award_charts_history` /
-   `transfer_partners_history` before every update — so if a chart devalues,
-   you can always answer "what did this used to cost, and when did it change,"
-   the same way the points ledger answers "why is my balance what it is."
-5. **`npm run check:staleness`** runs on a weekly schedule against the
-   *live* database (not just at PR time), since a chart can go stale just
-   from time passing with no new PRs touching it.
-
-### Adding or updating a rate
-
-1. Edit (or create) the relevant `data/award-charts/<programme>.yaml` file.
-2. Update `last_verified` to today's date and `source_note` to say how you
-   confirmed it (published chart / observed booking / forum report).
-3. Open a PR — CI validates automatically. Put your actual source (a
-   screenshot, a link, a description of the booking) in the PR
-   description; that's the human-readable audit trail for *why* the
-   number is what it is, on top of the git-commit audit trail for *what*
-   changed.
-4. On merge, the sync job pushes it to Supabase automatically.
-
-### Known limitation
-
-The sync script is upsert-only — it doesn't currently delete rows from
-Supabase that were removed from a YAML file (e.g., a route pulled from a
-chart entirely). For now, mark a removed entry's `points_cost` with a
-clearly wrong sentinel and open an issue, or extend `sync-reference-data.ts`
-with a reconciliation pass (diff existing DB rows against the file set,
-soft-delete anything missing) once this comes up in practice.
 
 ## Award-chart & transfer-partner data pipeline
 
@@ -477,6 +489,53 @@ built in (no network access to fonts.googleapis.com) but will work fine
 on Vercel; the `<link>` approach fetches in the visitor's browser instead,
 functionally equivalent and easier to verify locally in restricted
 environments.
+
+## Privacy Policy & Terms of Service
+
+`/privacy` and `/terms` — public, static pages, linked from the
+homepage footer, the login page ("by signing in you agree to..."), and
+`/find-a-card`'s affiliate disclosure. Written directly from what the
+codebase actually does (RLS isolation, which sub-processors get what
+data, the 30-day AI chat retention, the affiliate disclosure, a "not
+financial advice" disclaimer given the concierge makes card
+recommendations) — not generic boilerplate.
+
+**Both pages carry a visible notice that this is a good-faith draft, not
+legal advice**, and have three placeholders that must be filled in
+before this is genuinely publishable: the effective date, a real contact
+email, and (in Terms, section 10) the actual governing-law jurisdiction.
+Get a lawyer to review both before relying on them with real users,
+especially once real affiliate partnerships are in place — this is
+exactly the kind of area where "looks right" and "is actually compliant"
+can diverge, particularly around India's DPDP Act and ASCI's affiliate
+disclosure norms.
+
+**One honest product gap this surfaced**: the Privacy Policy currently
+describes account/data deletion as a manual, email-based process — because
+that's the truth; there's no self-service "delete my account" button
+built yet. Worth treating as a real follow-up if this goes live for real
+users, not just a documentation nicety.
+
+## Dashboard design system
+
+Every `/dashboard/**` page now shares one design system —
+`app/dashboard/dashboard.module.css` — imported the same way from every
+page: `import styles from '../dashboard.module.css'` (adjust relative
+depth per folder). Same visual language as `/find-a-card` (ledger paper,
+ink navy, emerald accent, Fraunces/IBM Plex fonts), but adapted for a
+functional logged-in interior rather than a marketing page — denser,
+fewer flourishes, no stamp motif (that's specific to `find-a-card`'s
+ranked-recommendation context). Fonts load once via `<link>` tags in
+`app/dashboard/layout.tsx`, which also now has a persistent nav bar
+linking every dashboard page plus the Log out button.
+
+**One CSS Modules gotcha worth knowing if you extend this**: a bare
+`:root { }` selector is rejected by Next.js's CSS Modules processor
+("Selector `:root` is not pure") — custom properties must be scoped to
+an actual class (here, `.shell`, which every dashboard page is wrapped
+in via the layout) rather than the document root. Hit this once while
+building this system; if a future style edit reintroduces a bare
+`:root`, this is why the build will fail.
 
 ## Adding a card
 

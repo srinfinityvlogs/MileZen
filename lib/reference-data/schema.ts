@@ -70,3 +70,28 @@ export const AwardChartFileSchema = z.object({
   programmeName: z.string().min(1),
   entries: z.array(AwardChartEntrySchema).min(1),
 });
+
+export const AwardRouteEntrySchema = z.object({
+  fromAirport: z.string().length(3),
+  toAirport: z.string().length(3),
+  city: z.string().min(1),
+  country: z.string().min(1),
+  cabin: z.enum(['economy', 'premium_economy', 'business', 'first']).default('economy'),
+  pointsOnward: z.number().int().positive(),
+  taxesOnward: z.number().min(0),
+  pointsReturn: z.number().int().positive(),
+  taxesReturn: z.number().min(0),
+});
+export const AwardRouteChartFileSchema = z.object({
+  programmeName: z.string().min(1),
+  sourceNote: z.string().min(1),
+  // Unlike the region-based award-charts pipeline, sourceUrl is optional
+  // here — this data can come from a screenshot/manual transcription
+  // without a citable URL. lastVerified is still required so staleness
+  // tracking still applies.
+  sourceUrl: z.string().url().optional(),
+  lastVerified: z.string().refine((d) => !Number.isNaN(Date.parse(d)) && new Date(d) <= new Date(), {
+    message: 'lastVerified must be a valid, non-future date',
+  }),
+  routes: z.array(AwardRouteEntrySchema).min(1),
+});

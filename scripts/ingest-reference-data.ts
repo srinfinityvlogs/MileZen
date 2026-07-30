@@ -27,6 +27,7 @@ import {
   MccRulesFileSchema,
   TransferPartnerFileSchema,
   AwardChartFileSchema,
+  AwardRouteChartFileSchema,
 } from '../lib/reference-data/schema';
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -70,11 +71,17 @@ async function main() {
     AwardChartFileSchema.parse(readJson(path.join(DATA_DIR, 'award-charts', f)))
   );
 
+  const routeChartFiles = readdirSync(path.join(DATA_DIR, 'award-route-charts')).filter((f) => f.endsWith('.json'));
+  const awardRouteChartFiles = routeChartFiles.map((f) =>
+    AwardRouteChartFileSchema.parse(readJson(path.join(DATA_DIR, 'award-route-charts', f)))
+  );
+
   console.log(
     `Validated: ${issuers.length} issuers, ${programmes.length} programmes, ` +
       `${cardProducts.length} card products, ${mccRules.length} MCC rules, ` +
       `${transferPartnerFiles.reduce((n, f) => n + f.edges.length, 0)} transfer edges, ` +
-      `${awardChartFiles.reduce((n, f) => n + f.entries.length, 0)} award-chart entries.\n`
+      `${awardChartFiles.reduce((n, f) => n + f.entries.length, 0)} award-chart entries, ` +
+      `${awardRouteChartFiles.reduce((n, f) => n + f.routes.length, 0)} award-route entries.\n`
   );
 
   if (isDryRun) {
@@ -234,6 +241,39 @@ async function main() {
     }
   }
   console.log(`✅ Upserted ${chartCount} award-chart entries`);
+
+  // --- 6. Upsert award_route_charts entries ------------------------------
+  let routeChartCount = 0;
+  for (const file of awardRouteChartFiles) {
+    const programmeId = programmeIdByName.get(file.programmeName);
+    if (!programmeId) fail(`Award route chart file references unknown programme "${file.programmeName}"`);
+
+    for (const route of file.routes) {
+      const { error } = await supabase.from('award_route_charts').upsert(
+        {
+          programme_id: programmeId,
+          from_airport: route.fromAirport,
+          to_airport: route.toAirport,
+          city: route.city,
+          country: route.country,
+          cabin: route.cabin,
+          points_onward: route.pointsOnward,
+          taxes_onward: route.taxesOnward,
+          points_return: route.pointsReturn,
+          taxes_return: route.taxesReturn,
+          source_note: file.sourceNote,
+          source_url: file.sourceUrl ?? null,
+          last_verified: file.lastVerified,
+        },
+        { onConflict: 'programme_id,from_airport,to_airport,cabin' }
+      );
+      if (error) {
+        fail(`Upserting award route ${file.programmeName} ${route.fromAirport}->${route.toAirport}: ${error.message}`);
+      }
+      routeChartCount++;
+    }
+  }
+  console.log(`✅ Upserted ${routeChartCount} award-route entries`);
 
   console.log('\n✅ Ingestion complete.');
 }

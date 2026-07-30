@@ -32,6 +32,21 @@ export default async function Home() {
         </Link>
       </p>
 
+      <p style={{ marginTop: 12 }}>
+        <Link
+          href="/redeem-miles"
+          style={{
+            display: 'inline-block',
+            padding: '10px 20px',
+            border: '1px solid #111',
+            color: '#111',
+            textDecoration: 'none',
+          }}
+        >
+          Redeem your miles →
+        </Link>
+      </p>
+
       <p style={{ marginTop: 16 }}>
         {user ? (
           <Link href="/dashboard">Go to dashboard</Link>
