@@ -47,6 +47,11 @@ export default function LoginPage() {
           {status === 'error' && <p style={{ color: 'crimson' }}>Something went wrong. Try again.</p>}
         </form>
       )}
+      <p style={{ marginTop: 24, fontSize: 12, color: '#888' }}>
+        By signing in, you agree to MileZen's{' '}
+        <a href="/terms" style={{ color: 'inherit' }}>Terms of Service</a> and{' '}
+        <a href="/privacy" style={{ color: 'inherit' }}>Privacy Policy</a>.
+      </p>
     </main>
   );
 }

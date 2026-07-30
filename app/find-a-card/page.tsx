@@ -229,6 +229,10 @@ export default async function FindACardPage({
             <p className={styles.disclosure}>
               MileZen may earn a commission if you apply for a card through these links, at no
               cost to you. This never affects which cards are shown or how they're ranked.
+              {' '}
+              <a href="/privacy" style={{ color: 'inherit' }}>Privacy Policy</a>
+              {' · '}
+              <a href="/terms" style={{ color: 'inherit' }}>Terms of Service</a>
             </p>
           </>
         )}

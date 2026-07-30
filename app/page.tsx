@@ -41,6 +41,12 @@ export default async function Home() {
           </>
         )}
       </p>
+
+      <p style={{ marginTop: 40, fontSize: 13, color: '#888' }}>
+        <Link href="/privacy" style={{ color: 'inherit' }}>Privacy Policy</Link>
+        {' · '}
+        <Link href="/terms" style={{ color: 'inherit' }}>Terms of Service</Link>
+      </p>
     </main>
   );
 }
