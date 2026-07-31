@@ -75,5 +75,60 @@
     "affiliateLink": "https://example.com/apply/icici-sapphiro?ref=milezen",
     "tagline": "Mid-tier travel and dining rewards without a premium fee",
     "feeWaiverNote": "Waived on ₹4L+ annual spend"
+  },
+  {
+    "issuerName": "SBI Card",
+    "name": "SimplyeSAVE",
+    "network": "Visa",
+    "annualFee": 249,
+    "currency": "INR",
+    "earnProgrammeName": "SBI Rewards",
+    "affiliateLink": "https://example.com/apply/sbi-simplyesave?ref=milezen",
+    "tagline": "Budget card, strong bonus rewards on everyday categories",
+    "feeWaiverNote": "Waived on ₹50K+ annual spend"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "name": "Zen",
+    "network": "Visa",
+    "annualFee": 500,
+    "currency": "INR",
+    "earnProgrammeName": "Kotak Rewards",
+    "affiliateLink": "https://example.com/apply/kotak-zen?ref=milezen",
+    "tagline": "Straightforward everyday rewards at a low fee",
+    "feeWaiverNote": "Waived on ₹75K+ annual spend"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "name": "ACE",
+    "network": "Visa",
+    "annualFee": 750,
+    "currency": "INR",
+    "earnProgrammeName": "Axis Rewards",
+    "affiliateLink": "https://example.com/apply/axis-ace?ref=milezen",
+    "tagline": "Standout cashback on bill payments and utilities",
+    "feeWaiverNote": "Waived on ₹2L+ annual spend"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "name": "Regalia",
+    "network": "Visa",
+    "annualFee": 2500,
+    "currency": "INR",
+    "earnProgrammeName": "SmartBuy Points",
+    "affiliateLink": "https://example.com/apply/hdfc-regalia?ref=milezen",
+    "tagline": "Premium-feel travel and dining rewards at a mid-tier fee",
+    "feeWaiverNote": "Waived on ₹3L+ annual spend"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "name": "Magnus",
+    "network": "Mastercard",
+    "annualFee": 12500,
+    "currency": "INR",
+    "earnProgrammeName": "Axis Rewards",
+    "affiliateLink": "https://example.com/apply/axis-magnus?ref=milezen",
+    "tagline": "Flat high rewards across nearly every spend category",
+    "feeWaiverNote": "Waived on ₹15L+ annual spend"
   }
 ]

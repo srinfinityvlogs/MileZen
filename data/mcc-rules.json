@@ -374,5 +374,285 @@
     "mccLabel": "Entertainment",
     "rewardRate": 4,
     "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "SimplyeSAVE",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 5,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Kotak Mahindra Bank",
+    "cardName": "Zen",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 1.5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 1.5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 1.5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 1.5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 2,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "ACE",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 1.5,
+    "rewardType": "cashback_pct"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 1,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "HDFC Bank",
+    "cardName": "Regalia",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 2,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "5812",
+    "mccLabel": "Dining",
+    "rewardRate": 6,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "5411",
+    "mccLabel": "Groceries",
+    "rewardRate": 6,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "4511",
+    "mccLabel": "Travel",
+    "rewardRate": 6,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 3,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "5969",
+    "mccLabel": "Online Shopping",
+    "rewardRate": 6,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "4900",
+    "mccLabel": "Utilities",
+    "rewardRate": 3,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Magnus",
+    "mccCode": "7832",
+    "mccLabel": "Entertainment",
+    "rewardRate": 4,
+    "rewardType": "points_per_unit"
   }
 ]

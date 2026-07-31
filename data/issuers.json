@@ -3,5 +3,7 @@
   { "name": "Amex", "country": "IN" },
   { "name": "HSBC", "country": "IN" },
   { "name": "ICICI Bank", "country": "IN" },
-  { "name": "SBI Card", "country": "IN" }
+  { "name": "SBI Card", "country": "IN" },
+  { "name": "Axis Bank", "country": "IN" },
+  { "name": "Kotak Mahindra Bank", "country": "IN" }
 ]
