@@ -34,6 +34,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Link href="/dashboard/award-search" className={styles.navLink}>
             Award search
           </Link>
+          <Link href="/dashboard/settings" className={styles.navLink}>
+            Settings
+          </Link>
           <form action={signOut}>
             <button type="submit" className={styles.logoutButton}>
               Log out

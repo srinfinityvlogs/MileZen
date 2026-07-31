@@ -120,10 +120,11 @@ export default function PrivacyPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Your rights</h2>
           <p className={styles.body}>
-            You can access and review your own data at any time by signing in. To request
-            correction or deletion of your account and associated data, contact us at the address
-            below — <strong>this is currently a manual process</strong>, not yet a self-service
-            "delete my account" button in the product.
+            You can access and review your own data at any time by signing in. You can{' '}
+            <strong>permanently delete your account and all associated data yourself</strong>,
+            immediately, from Settings once signed in — this removes your cards, transactions,
+            point balances, uploaded statements, reminders, and AI concierge history. For
+            anything this self-service option doesn't cover, contact us at the address below.
           </p>
         </section>
 
