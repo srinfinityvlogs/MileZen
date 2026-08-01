@@ -26,19 +26,20 @@ export default function TermsPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>1. Acceptance of terms</h2>
           <p className={styles.body}>
-            By creating an account or using MileZen's public tools (including the card-search
-            feature, which requires no account), you agree to these terms. If you don't agree,
-            please don't use the service.
+            By using any of MileZen's tools — card search, miles redemption charts, award search,
+            or the AI concierge, all of which require no account or sign-in — you agree to these
+            terms. If you don't agree, please don't use the service.
           </p>
         </section>
 
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>2. What MileZen is</h2>
           <p className={styles.body}>
-            MileZen is a personal tool for tracking credit cards, loyalty points, and reward
-            redemptions, with an AI concierge that answers questions about your own data. It also
-            offers a public card-comparison tool that recommends cards based on your stated
-            spending category and budget, with links to apply through our affiliate partners.
+            MileZen is a free set of public tools for finding the best credit card for your
+            spending and figuring out how to redeem airline miles — a card-comparison search with
+            affiliate apply links, a published-award-chart lookup, a multi-currency transfer-path
+            search, and an AI concierge that answers questions using the same underlying catalog.
+            None of it requires an account.
           </p>
         </section>
 
@@ -75,12 +76,11 @@ export default function TermsPage() {
         </section>
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>6. Your account</h2>
+          <h2 className={styles.sectionTitle}>6. Acceptable use</h2>
           <ul className={styles.list}>
-            <li>You must be at least 18 to create an account.</li>
-            <li>You're responsible for keeping access to your email (used for sign-in) secure.</li>
-            <li>One account per person — don't share credentials or access with others.</li>
-            <li>Don't attempt to access another user's data or interfere with the service's security.</li>
+            <li>Don't attempt to scrape, abuse, or overload the service in a way that degrades it for other visitors.</li>
+            <li>Don't attempt to interfere with the service's security.</li>
+            <li>Don't submit anything to the AI concierge you wouldn't want processed by a third-party AI provider — see the Privacy Policy for what that involves.</li>
           </ul>
         </section>
 

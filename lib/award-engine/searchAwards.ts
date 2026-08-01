@@ -11,13 +11,19 @@ export interface AwardSearchInput {
   destRegion: string;
   cabin: string;
   strategy?: RankStrategy;
+  // Which currencies to treat as possible starting points — explicitly
+  // supplied by the caller (checkboxes on a public form, or a value the
+  // concierge extracts from conversation), never looked up from any
+  // stored account. If omitted/empty, every programme in the catalog is
+  // treated as a potential source, so the tool still returns something
+  // useful for a visitor who hasn't told us what they hold yet.
+  heldProgrammeIds?: string[];
 }
 
 export interface AwardSearchOption {
   programmeId: string;
   programmeName: string;
   pointsCost: number;
-  alreadyBookable: boolean;
   paths: Array<{
     sourceProgrammeId: string;
     sourceProgrammeName: string;
@@ -34,10 +40,8 @@ export interface AwardSearchOption {
   }>;
 }
 
-// IMPORTANT: `supabase` must always be the caller's own RLS-scoped client
-// (from lib/supabase/server.ts), never the service-role client — this
-// function reads the caller's point_balances, and must never be reachable
-// with another user's session or with elevated privileges.
+// `supabase` just needs read access to public reference data — no
+// signed-in session involved anywhere in this app anymore.
 export async function searchAwardOptions(
   supabase: SupabaseClient,
   input: AwardSearchInput
@@ -56,37 +60,25 @@ export async function searchAwardOptions(
   if (chartError) return { error: 'Failed to look up award charts' };
   if (!chartRows || chartRows.length === 0) return { strategy: rankStrategy, options: [] };
 
-  const { data: balances, error: balanceError } = await supabase
-    .from('point_balances')
-    .select('programme_id, balance');
+  const { data: allProgrammes } = await supabase.from('programmes').select('id, name');
+  const programmeNameById = new Map((allProgrammes ?? []).map((p) => [p.id, p.name]));
 
-  if (balanceError) return { error: 'Failed to load balances' };
-
-  const heldProgrammeIds = (balances ?? [])
-    .filter((b) => (b.balance ?? 0) > 0)
-    .map((b) => b.programme_id);
+  const heldProgrammeIds =
+    input.heldProgrammeIds && input.heldProgrammeIds.length > 0
+      ? input.heldProgrammeIds
+      : (allProgrammes ?? []).map((p) => p.id);
 
   const edges = await loadTransferGraph();
   const adjacency = buildAdjacency(edges);
 
-  // Path hops only carry programme IDs internally (the graph engine
-  // shouldn't need to care about display names) — resolve them to real
-  // names here, once, so every consumer (this UI, and the concierge's
-  // search_award_options tool) gets something a human — or a model
-  // writing a natural-language answer — can actually use.
-  const { data: allProgrammes } = await supabase.from('programmes').select('id, name');
-  const programmeNameById = new Map((allProgrammes ?? []).map((p) => [p.id, p.name]));
-
   const options: AwardSearchOption[] = chartRows.map((chart) => {
     const paths = findPaths(adjacency, heldProgrammeIds, chart.programme_id);
     const ranked = rankPaths(paths, rankStrategy, chart.points_cost);
-    const balanceRow = balances?.find((b) => b.programme_id === chart.programme_id);
 
     return {
       programmeId: chart.programme_id,
       programmeName: (chart as any).programmes?.name ?? 'Unknown programme',
       pointsCost: chart.points_cost,
-      alreadyBookable: (balanceRow?.balance ?? 0) >= chart.points_cost,
       paths: ranked.slice(0, 5).map((p) => ({
         sourceProgrammeId: p.sourceProgrammeId,
         sourceProgrammeName: programmeNameById.get(p.sourceProgrammeId) ?? 'Unknown programme',

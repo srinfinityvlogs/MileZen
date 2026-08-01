@@ -1,0 +1,29 @@
+-- ============================================================================
+-- Migration 012: revoke public RPC access to rls_auto_enable()
+-- ============================================================================
+-- rls_auto_enable() is not defined anywhere in this project's own SQL —
+-- it's Supabase's internal implementation of the "Enable automatic RLS"
+-- project setting (Project Settings > Database). It showed up in the
+-- linter twice: once for `anon`, once for `authenticated`, both flagging
+-- the same underlying exposure — this function is SECURITY DEFINER and
+-- was directly callable via POST /rest/v1/rpc/rls_auto_enable by anyone
+-- signed in (or even anonymous).
+--
+-- Fix: revoke EXECUTE from anon/authenticated/public, same treatment as
+-- migration 011 gave our own two trigger functions. This only blocks
+-- DIRECT invocation via the REST RPC endpoint — it does not stop
+-- Postgres's own internal mechanisms (this function is presumably wired
+-- up via an event trigger tied to the "Enable automatic RLS" setting)
+-- from continuing to work, since internal trigger/event-trigger
+-- invocation doesn't go through the calling role's EXECUTE privilege
+-- check the same way a direct RPC call does.
+--
+-- We don't own this function and can't see its body, so this is revoking
+-- external callability, not altering its behavior. If you want this
+-- concern gone entirely rather than just locked down, the alternative is
+-- turning off "Enable automatic RLS" in Project Settings > Database —
+-- this project no longer depends on that setting since every table's RLS
+-- state is now managed explicitly (see migrations 005 and 010).
+-- ============================================================================
+
+revoke execute on function public.rls_auto_enable() from public, anon, authenticated;

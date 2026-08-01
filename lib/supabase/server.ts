@@ -1,10 +1,13 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 
-// Server-side Supabase instance for Server Components, Route Handlers,
-// and Server Actions. Still uses the anon key + the signed-in user's
-// session cookie — RLS still applies. This is NOT the service-role client.
+// Plain anon-key client — no cookies, no session, no auth. Every page and
+// tool in this app reads only public reference data (card_products,
+// mcc_rules, award_charts, award_route_charts, transfer_partners,
+// programmes, issuers), all granted SELECT to the `anon` role with
+// explicit RLS read policies (see schema.sql section 5 and migration 010).
+// There's no signed-in user anywhere in this app, so there's nothing for
+// a cookie-based session client to do that this doesn't already cover.
 export async function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -16,23 +19,5 @@ export async function createClient() {
     );
   }
 
-  const cookieStore = await cookies();
-
-  return createServerClient<Database>(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
-        } catch {
-          // setAll is called from a Server Component sometimes — safe to
-          // ignore if middleware is already refreshing the session.
-        }
-      },
-    },
-  });
+  return createSupabaseClient<Database>(supabaseUrl, supabaseAnonKey);
 }

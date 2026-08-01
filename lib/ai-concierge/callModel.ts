@@ -32,9 +32,9 @@ export interface ConciergeTurn {
 }
 
 // Runs the full tool-use loop for one user message and returns the final
-// assistant text. `supabase` is the caller's own RLS-scoped client —
-// passed through to every tool executor, so the model can only ever
-// retrieve data belonging to the person who's actually asking.
+// assistant text. `supabase` just needs read access to the public
+// reference catalog — there's no signed-in user or personal data
+// anywhere in this app for it to be scoped to.
 export async function runConciergeTurn(
   supabase: SupabaseClient,
   history: ConciergeTurn[],
@@ -65,7 +65,7 @@ export async function runConciergeTurn(
     }
 
     // Execute every requested tool call, entirely server-side, against
-    // the caller's own RLS-scoped data — then feed the results back.
+    // the public catalog — then feed the results back.
     messages.push(choice.message);
 
     const toolResults = await Promise.all(
