@@ -3,8 +3,8 @@ export interface GraphEdge {
   toProgrammeId: string;
   ratioFrom: number;
   ratioTo: number;
-  transferTimeLabel: string;   // 'instant', '~1 day', '≤6 wks' — display only
-  transferTimeMaxDays: number; // used for sorting/ranking
+  transferTimeLabel: string;
+  transferTimeMaxDays: number;
   minTransfer: number | null;
 }
 
@@ -18,12 +18,12 @@ export interface PathHop {
 }
 
 export interface TransferPath {
-  hops: PathHop[];                 // empty array = user already holds the target currency directly
+  hops: PathHop[];
   sourceProgrammeId: string;
   targetProgrammeId: string;
   hopCount: number;
-  totalFactor: number;             // target points produced per 1 source point, compounded across hops
-  totalMaxDays: number;            // sum of worst-case days across hops
+  totalFactor: number;
+  totalMaxDays: number;
   sourcePointsNeeded: (targetPointsRequired: number) => number;
 }
 

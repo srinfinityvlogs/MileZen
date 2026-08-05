@@ -19,10 +19,6 @@ const SORTS = [
   { value: 'az', label: 'City A-Z' },
 ];
 
-// Public page — no auth required, same pattern as /find-a-card. Server-
-// rendered from real query params so results are a bookmarkable,
-// crawlable URL like /redeem-miles?from=DEL&country=UK&sort=points —
-// matters directly for the SEO work planned right after this.
 export default async function RedeemMilesPage({
   searchParams,
 }: {
@@ -30,8 +26,6 @@ export default async function RedeemMilesPage({
 }) {
   const supabase = await createClient();
 
-  // award_route_charts has a public SELECT policy (migration 013) — this
-  // works whether or not the visitor is signed in.
   const { data } = await supabase
     .from('award_route_charts')
     .select(
@@ -64,20 +58,12 @@ export default async function RedeemMilesPage({
   filtered = filtered.sort((a, b) => {
     if (sort === 'points') return a.pointsOnward - b.pointsOnward;
     if (sort === 'az') return a.city.localeCompare(b.city);
-    // default: best value = lowest |taxesOnward - taxesReturn|
     return Math.abs(a.taxesOnward - a.taxesReturn) - Math.abs(b.taxesOnward - b.taxesReturn);
   });
 
   return (
     <div className={styles.page}>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap"
-      />
       <div className={styles.container}>
-        <p className={styles.mark}>MileZen</p>
         <h1 className={styles.title}>Redeem your miles</h1>
         <p className={styles.intro}>
           Real award charts — how many points and taxes it takes to fly each route, city to city,
@@ -90,9 +76,7 @@ export default async function RedeemMilesPage({
             <select id="from" name="from" defaultValue={searchParams.from ?? ''} className={styles.select}>
               <option value="">Any city</option>
               {fromAirports.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
+                <option key={a} value={a}>{a}</option>
               ))}
             </select>
           </div>
@@ -102,9 +86,7 @@ export default async function RedeemMilesPage({
             <select id="country" name="country" defaultValue={searchParams.country ?? ''} className={styles.select}>
               <option value="">Any country</option>
               {countries.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </div>
@@ -113,20 +95,14 @@ export default async function RedeemMilesPage({
             <label className={styles.fieldLabel} htmlFor="sort">Sort by</label>
             <select id="sort" name="sort" defaultValue={sort} className={styles.select}>
               {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
+                <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
           </div>
 
-          <button type="submit" className={styles.button}>
-            Apply
-          </button>
+          <button type="submit" className={styles.button}>Apply</button>
           {(searchParams.from || searchParams.country || searchParams.sort) && (
-            <a href="/redeem-miles" className={styles.resetLink}>
-              Reset
-            </a>
+            <a href="/redeem-miles" className={styles.resetLink}>Reset</a>
           )}
         </form>
 

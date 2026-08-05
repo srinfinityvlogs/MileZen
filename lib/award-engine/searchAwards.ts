@@ -11,12 +11,6 @@ export interface AwardSearchInput {
   destRegion: string;
   cabin: string;
   strategy?: RankStrategy;
-  // Which currencies to treat as possible starting points — explicitly
-  // supplied by the caller (checkboxes on a public form, or a value the
-  // concierge extracts from conversation), never looked up from any
-  // stored account. If omitted/empty, every programme in the catalog is
-  // treated as a potential source, so the tool still returns something
-  // useful for a visitor who hasn't told us what they hold yet.
   heldProgrammeIds?: string[];
 }
 
@@ -40,8 +34,6 @@ export interface AwardSearchOption {
   }>;
 }
 
-// `supabase` just needs read access to public reference data — no
-// signed-in session involved anywhere in this app anymore.
 export async function searchAwardOptions(
   supabase: SupabaseClient,
   input: AwardSearchInput

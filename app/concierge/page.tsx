@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import styles from '../theme.module.css';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -28,9 +29,6 @@ export default function ConciergePage() {
       const res = await fetch('/api/concierge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Conversation history lives only in this browser tab — nothing
-        // is saved server-side, since there's no account for it to
-        // belong to. Closing this tab forgets the conversation.
         body: JSON.stringify({ message: userMessage.content, history: messages }),
       });
       const data = await res.json();
@@ -48,35 +46,42 @@ export default function ConciergePage() {
   }
 
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 600 }}>
-      <h1>MileZen concierge</h1>
-      <p style={{ color: '#666', fontSize: 14 }}>
-        Ask which card is best for a category, or how to redeem miles for a route. No account
-        needed — nothing here is saved once you close this tab.
-      </p>
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Concierge</h1>
+        <p className={styles.intro}>
+          Ask which card is best for a category, or how to redeem miles for a route. No account
+          needed — nothing here is saved once you close this tab.
+        </p>
 
-      <div style={{ marginTop: 24, marginBottom: 16 }}>
-        {messages.map((m, i) => (
-          <div key={i} style={{ marginBottom: 12 }}>
-            <strong>{m.role === 'user' ? 'You' : 'MileZen'}:</strong>
-            <p style={{ margin: '4px 0', whiteSpace: 'pre-wrap' }}>{m.content}</p>
-          </div>
-        ))}
-        {loading && <p style={{ color: '#999' }}>Thinking…</p>}
-        {error && <p style={{ color: 'crimson' }}>{error}</p>}
+        <div className={styles.chatWindow}>
+          {messages.length === 0 && !loading && (
+            <p className={styles.chatThinking}>Ask something to get started.</p>
+          )}
+          {messages.map((m, i) => (
+            <div key={i} className={styles.chatMessage}>
+              <p className={`${styles.chatRole} ${m.role === 'assistant' ? styles.chatRoleAssistant : ''}`}>
+                {m.role === 'user' ? 'You' : 'MileZen'}
+              </p>
+              <p className={styles.chatText}>{m.content}</p>
+            </div>
+          ))}
+          {loading && <p className={styles.chatThinking}>Thinking…</p>}
+          {error && <p className={styles.errorText}>{error}</p>}
+        </div>
+
+        <form onSubmit={sendMessage} className={styles.chatInputRow}>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="e.g. Which card should I use for dining?"
+            className={styles.input}
+          />
+          <button type="submit" disabled={loading} className={styles.buttonPrimary} style={{ border: 'none' }}>
+            Send
+          </button>
+        </form>
       </div>
-
-      <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g. Which card should I use for dining?"
-          style={{ flex: 1, padding: 8 }}
-        />
-        <button type="submit" disabled={loading}>
-          Send
-        </button>
-      </form>
-    </main>
+    </div>
   );
 }

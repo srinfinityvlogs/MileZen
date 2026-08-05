@@ -1,13 +1,7 @@
 import type { GraphEdge, PathHop, TransferPath } from './types';
 
-const MAX_HOPS = 4; // beyond ~4 hops, real-world transfer paths stop being
-                     // practical (fees, time, minimums compound) — also
-                     // keeps this DFS from blowing up on a dense graph
+const MAX_HOPS = 4;
 
-// Finds every practical path from any of `sourceProgrammeIds` (the
-// currencies the user actually holds) to `targetProgrammeId`, up to
-// MAX_HOPS transfers. Cycle-safe: a programme already visited in the
-// current path is never revisited.
 export function findPaths(
   adjacency: Map<string, GraphEdge[]>,
   sourceProgrammeIds: string[],
@@ -17,7 +11,6 @@ export function findPaths(
 
   for (const sourceId of sourceProgrammeIds) {
     if (sourceId === targetProgrammeId) {
-      // User already holds the target currency directly — zero-hop "path".
       results.push(makePath(sourceId, targetProgrammeId, []));
       continue;
     }
@@ -40,7 +33,7 @@ function dfs(
 
   const edges = adjacency.get(currentId) ?? [];
   for (const edge of edges) {
-    if (visited.has(edge.toProgrammeId)) continue; // cycle guard
+    if (visited.has(edge.toProgrammeId)) continue;
 
     const hop: PathHop = {
       fromProgrammeId: edge.fromProgrammeId,
@@ -63,8 +56,6 @@ function dfs(
 }
 
 function makePath(sourceId: string, targetId: string, hops: PathHop[]): TransferPath {
-  // Ratios compound multiplicatively: each hop turns `ratioFrom` units of
-  // the source into `ratioTo` units of the destination currency.
   const totalFactor = hops.reduce((factor, hop) => factor * (hop.ratioTo / hop.ratioFrom), 1);
   const totalMaxDays = hops.reduce((sum, hop) => sum + hop.transferTimeMaxDays, 0);
 
@@ -75,12 +66,6 @@ function makePath(sourceId: string, targetId: string, hops: PathHop[]): Transfer
     hopCount: hops.length,
     totalFactor,
     totalMaxDays,
-    // Simplification note: this treats transfers as perfectly divisible.
-    // Real transfers move in fixed batches (e.g. 1000 at a time) and may
-    // have minimums — round up to the nearest whole batch before showing
-    // a final number to the user; left as a follow-up refinement once
-    // real transfer-partner data (with batch sizes) is populated.
-    sourcePointsNeeded: (targetPointsRequired: number) =>
-      Math.ceil(targetPointsRequired / totalFactor),
+    sourcePointsNeeded: (targetPointsRequired: number) => Math.ceil(targetPointsRequired / totalFactor),
   };
 }

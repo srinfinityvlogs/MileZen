@@ -6,12 +6,6 @@ export const metadata = { title: 'Terms of Service — MileZen' };
 export default function TermsPage() {
   return (
     <div className={styles.page}>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=IBM+Plex+Sans:wght@400;600&display=swap"
-      />
       <div className={styles.container}>
         <h1 className={styles.title}>Terms of Service</h1>
         <p className={styles.updated}>Last updated: [DATE — fill in before publishing]</p>
@@ -20,7 +14,7 @@ export default function TermsPage() {
           <strong>Before you rely on this:</strong> this is a good-faith draft, not a substitute
           for legal advice. Have a lawyer review this — particularly the liability, disclaimer,
           and governing-law sections — before treating it as binding, especially once real
-          affiliate partnerships and real users are involved.
+          affiliate partnerships are involved.
         </div>
 
         <section className={styles.section}>
@@ -47,12 +41,12 @@ export default function TermsPage() {
           <h2 className={styles.sectionTitle}>3. Not financial advice</h2>
           <p className={styles.body}>
             MileZen is not a bank, a registered financial advisor, or a credit counselor. Nothing
-            in the ledger, the AI concierge's answers, or the card-search results constitutes
-            financial, credit, or legal advice. Card recommendations reflect published reward
-            rates and annual fees as we've recorded them — they do not guarantee approval, the
-            best available deal in the market, or that the terms haven't changed since we last
+            in the card-search results, the award charts, or the AI concierge's answers
+            constitutes financial, credit, or legal advice. Card recommendations reflect published
+            reward rates and annual fees as we've recorded them — they do not guarantee approval,
+            the best available deal in the market, or that the terms haven't changed since we last
             checked. Always confirm current rates, fees, and terms directly with the card issuer
-            before applying.
+            or airline before applying or redeeming.
           </p>
         </section>
 

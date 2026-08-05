@@ -45,7 +45,6 @@
   margin: 0 0 32px;
 }
 
-/* --- search form, styled like a deposit slip --- */
 .form {
   display: flex;
   gap: 16px;
@@ -104,7 +103,6 @@
   background: var(--accent-dark);
 }
 
-/* --- results --- */
 .resultsHeading {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-weight: 600;
@@ -220,11 +218,6 @@
   background: var(--accent-dark);
 }
 
-/* --- signature element: top-pick badge --- */
-/* Deliberately NOT absolutely positioned — an earlier version overlapped
-   the Apply Now button on wide rows. This flows inline above the card
-   name instead, so it can never collide with anything regardless of
-   row width or content length. */
 .topPickBadge {
   display: inline-flex;
   align-items: center;
@@ -263,7 +256,6 @@
   line-height: 1.5;
 }
 
-/* --- mobile --- */
 @media (max-width: 560px) {
   .row {
     grid-template-columns: 24px 1fr;

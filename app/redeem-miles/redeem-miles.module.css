@@ -118,7 +118,6 @@
   margin: 0 0 16px;
 }
 
-/* --- table --- */
 .tableWrap {
   overflow-x: auto;
   border: 1px solid var(--rm-rule);

@@ -1,14 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import type { GraphEdge } from './types';
 
-// transfer_partners is global reference data (no RLS, public read — see
-// schema.sql section 5) so this is safe to fetch with the normal
-// request-scoped client; no service-role needed here.
-//
-// This is read fresh per request for correctness while the dataset is
-// small. Once you have hundreds of programmes, wrap this in Next.js's
-// `unstable_cache` or a short-TTL in-memory cache — the data changes on
-// the order of days/weeks (bank T&Cs updates), never per-request.
 export async function loadTransferGraph(): Promise<GraphEdge[]> {
   const supabase = await createClient();
 

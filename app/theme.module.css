@@ -1,0 +1,291 @@
+/* ============================================================================
+   Shared site theme. Same palette/type language as find-a-card and
+   redeem-miles (ledger paper, ink navy, emerald accent, Fraunces + IBM
+   Plex fonts) — this file exists so pages that don't have their own
+   bespoke module (the homepage, award search, concierge) still look like
+   part of the same product, and so the persistent header is styled once
+   rather than copy-pasted per page.
+   ============================================================================ */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 1px solid #d8d3c4;
+  background: #fffdf8;
+}
+
+.headerInner {
+  max-width: 920px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #14213d;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navLink {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 13.5px;
+  color: #6b6659;
+  text-decoration: none;
+}
+.navLink:hover {
+  color: #17543f;
+}
+
+/* --- shared page wrapper, for pages without their own module --- */
+.page {
+  background: #f7f5ef;
+  color: #14213d;
+  min-height: 100vh;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  padding: 48px 24px 96px;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.mark {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #17543f;
+  margin: 0 0 8px;
+}
+
+.title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(28px, 4.5vw, 40px);
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+}
+
+.intro {
+  color: #6b6659;
+  font-size: 15.5px;
+  line-height: 1.55;
+  max-width: 52ch;
+  margin: 0 0 28px;
+}
+
+/* --- buttons --- */
+.buttonPrimary {
+  display: inline-block;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 11px 22px;
+  border: none;
+  border-radius: 3px;
+  background: #14213d;
+  color: #f7f5ef;
+  text-decoration: none;
+  cursor: pointer;
+}
+.buttonPrimary:hover {
+  background: #17543f;
+}
+
+.buttonSecondary {
+  display: inline-block;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 21px;
+  border: 1px solid #14213d;
+  border-radius: 3px;
+  background: transparent;
+  color: #14213d;
+  text-decoration: none;
+  cursor: pointer;
+}
+.buttonSecondary:hover {
+  border-color: #17543f;
+  color: #17543f;
+}
+
+/* --- forms (award search, concierge input) --- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6659;
+}
+
+.input,
+.select {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 15px;
+  padding: 10px 12px;
+  border: 1px solid #d8d3c4;
+  border-radius: 3px;
+  background: #fff;
+  color: #14213d;
+  width: 100%;
+  box-sizing: border-box;
+}
+.input:focus-visible,
+.select:focus-visible,
+.buttonPrimary:focus-visible,
+.buttonSecondary:focus-visible {
+  outline: 2px solid #1f6f54;
+  outline-offset: 2px;
+}
+
+.fieldset {
+  border: 1px solid #d8d3c4;
+  border-radius: 3px;
+  padding: 12px;
+}
+.legend {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6659;
+  padding: 0 4px;
+}
+.checkboxRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+.checkboxLabel {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.errorText {
+  color: #a33b3b;
+  font-size: 14px;
+}
+
+/* --- ledger-style result rows (award search) --- */
+.resultsHeading {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6b6659;
+  margin: 36px 0 4px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d8d3c4;
+}
+
+.card {
+  border: 1px solid #d8d3c4;
+  border-radius: 4px;
+  background: #fffdf8;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  font-weight: 700;
+  font-size: 15px;
+  margin: 0 0 4px;
+}
+
+.pathList {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 13.5px;
+  color: #6b6659;
+}
+.pathList li {
+  margin-bottom: 4px;
+}
+
+.empty {
+  color: #6b6659;
+  font-size: 14.5px;
+  padding: 16px 0;
+}
+
+/* --- concierge chat --- */
+.chatWindow {
+  border: 1px solid #d8d3c4;
+  border-radius: 4px;
+  background: #fffdf8;
+  padding: 20px;
+  min-height: 240px;
+  margin-bottom: 16px;
+}
+
+.chatMessage {
+  margin-bottom: 14px;
+}
+.chatRole {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6659;
+  margin: 0 0 3px;
+}
+.chatRoleAssistant {
+  color: #17543f;
+}
+.chatText {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.chatThinking {
+  color: #6b6659;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.chatInputRow {
+  display: flex;
+  gap: 10px;
+}
+.chatInputRow .input {
+  flex: 1;
+}
+
+@media (max-width: 560px) {
+  .headerInner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

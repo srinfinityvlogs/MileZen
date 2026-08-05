@@ -3,14 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { runConciergeTurn } from '@/lib/ai-concierge/callModel';
 
 const MAX_MESSAGE_LENGTH = 2000;
-const MAX_HISTORY_TURNS = 6; // bounds token cost regardless of what the client sends
+const MAX_HISTORY_TURNS = 6;
 
-// POST /api/concierge   body: { message: string, history?: { role, content }[] }
-//
-// Public route — no auth, no account, nothing persisted server-side.
-// Conversation history lives only in the browser tab's own state and is
-// sent back with each request so the model has context within a single
-// session; nothing is written to a database anywhere in this flow.
 export async function POST(request: Request) {
   const supabase = await createClient();
 

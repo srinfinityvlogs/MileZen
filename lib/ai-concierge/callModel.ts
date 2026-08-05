@@ -4,12 +4,8 @@ import { CONCIERGE_TOOLS, executeTool } from './tools';
 import { CONCIERGE_SYSTEM_PROMPT } from './systemPrompt';
 
 const MODEL = process.env.CONCIERGE_MODEL ?? 'llama-3.3-70b-versatile';
-const MAX_TOOL_ITERATIONS = 5; // hard cap — bounds both cost and any risk of a runaway loop
+const MAX_TOOL_ITERATIONS = 5;
 
-// Built lazily, per call — NOT once at module load time. Constructing this
-// at module scope can "freeze" the client with a stale/empty apiKey across
-// Next.js dev-server hot reloads. Building it fresh on every call is
-// cheap (no network I/O in the constructor) and avoids that entirely.
 function getGroqClient(): OpenAI {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
@@ -18,11 +14,6 @@ function getGroqClient(): OpenAI {
         'then fully restart the dev server: rm -rf .next && npm run dev'
     );
   }
-  // Groq's API is OpenAI-compatible, so we use the official `openai` SDK
-  // pointed at Groq's base URL rather than a Groq-specific SDK. Per Groq's
-  // own docs (console.groq.com/docs/your-data), customer inference data is
-  // NOT retained by default — no training, no logging of prompts/outputs
-  // beyond what's needed to serve the request.
   return new OpenAI({ apiKey, baseURL: 'https://api.groq.com/openai/v1' });
 }
 
@@ -31,10 +22,9 @@ export interface ConciergeTurn {
   content: string;
 }
 
-// Runs the full tool-use loop for one user message and returns the final
-// assistant text. `supabase` just needs read access to the public
-// reference catalog — there's no signed-in user or personal data
-// anywhere in this app for it to be scoped to.
+// `supabase` just needs read access to the public reference catalog —
+// there's no signed-in user or personal data anywhere in this app for it
+// to be scoped to.
 export async function runConciergeTurn(
   supabase: SupabaseClient,
   history: ConciergeTurn[],
@@ -60,12 +50,9 @@ export async function runConciergeTurn(
     const toolCalls = choice.message.tool_calls;
 
     if (!toolCalls || toolCalls.length === 0) {
-      // No more tools requested — this is the final answer.
       return choice.message.content ?? '';
     }
 
-    // Execute every requested tool call, entirely server-side, against
-    // the public catalog — then feed the results back.
     messages.push(choice.message);
 
     const toolResults = await Promise.all(

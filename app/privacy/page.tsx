@@ -6,12 +6,6 @@ export const metadata = { title: 'Privacy Policy — MileZen' };
 export default function PrivacyPage() {
   return (
     <div className={styles.page}>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=IBM+Plex+Sans:wght@400;600&display=swap"
-      />
       <div className={styles.container}>
         <h1 className={styles.title}>Privacy Policy</h1>
         <p className={styles.updated}>Last updated: [DATE — fill in before publishing]</p>

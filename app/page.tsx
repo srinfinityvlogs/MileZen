@@ -1,77 +1,37 @@
 import Link from 'next/link';
+import styles from './theme.module.css';
 
-// No login anywhere in this app — every page here is a public tool.
 export default function Home() {
   return (
-    <main style={{ padding: 40, fontFamily: 'system-ui', maxWidth: 480 }}>
-      <h1>MileZen</h1>
-      <p>Find the best card for your spending, and the smartest way to redeem miles you already have.</p>
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Find the best card for your spending.</h1>
+        <p className={styles.intro}>
+          And the smartest way to redeem the miles you already have. No login, no account —
+          every tool here works the same for everyone.
+        </p>
 
-      <p style={{ marginTop: 24 }}>
-        <Link
-          href="/find-a-card"
-          style={{
-            display: 'inline-block',
-            padding: '10px 20px',
-            background: '#111',
-            color: '#fff',
-            textDecoration: 'none',
-          }}
-        >
-          Find the best card for you →
-        </Link>
-      </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 280 }}>
+          <Link href="/find-a-card" className={styles.buttonPrimary}>
+            Find the best card for you →
+          </Link>
+          <Link href="/redeem-miles" className={styles.buttonSecondary}>
+            Redeem your miles →
+          </Link>
+          <Link href="/award-search" className={styles.buttonSecondary}>
+            Award search →
+          </Link>
+          <Link href="/concierge" className={styles.buttonSecondary}>
+            Ask the AI concierge →
+          </Link>
+        </div>
 
-      <p style={{ marginTop: 12 }}>
-        <Link
-          href="/redeem-miles"
-          style={{
-            display: 'inline-block',
-            padding: '10px 20px',
-            border: '1px solid #111',
-            color: '#111',
-            textDecoration: 'none',
-          }}
-        >
-          Redeem your miles →
-        </Link>
-      </p>
-
-      <p style={{ marginTop: 12 }}>
-        <Link
-          href="/award-search"
-          style={{
-            display: 'inline-block',
-            padding: '10px 20px',
-            border: '1px solid #111',
-            color: '#111',
-            textDecoration: 'none',
-          }}
-        >
-          Award search →
-        </Link>
-      </p>
-
-      <p style={{ marginTop: 12 }}>
-        <Link
-          href="/concierge"
-          style={{
-            display: 'inline-block',
-            padding: '10px 20px',
-            border: '1px solid #111',
-            color: '#111',
-            textDecoration: 'none',
-          }}
-        >
-          Ask the AI concierge →
-        </Link>
-      </p>
-
-      <p style={{ marginTop: 40, fontSize: 13, color: '#888' }}>
-        <Link href="/privacy" style={{ color: 'inherit' }}>Privacy Policy</Link>
-        {' · '}
-        <Link href="/terms" style={{ color: 'inherit' }}>Terms of Service</Link>
-      </p>
-    </main>
+        <p style={{ marginTop: 48, fontSize: 13, color: '#6b6659' }}>
+          <Link href="/privacy" style={{ color: 'inherit' }}>Privacy Policy</Link>
+          {' · '}
+          <Link href="/terms" style={{ color: 'inherit' }}>Terms of Service</Link>
+        </p>
+      </div>
+    </div>
   );
 }

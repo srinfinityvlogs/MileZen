@@ -2,12 +2,6 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { searchAwardOptions } from '@/lib/award-engine/searchAwards';
 
-// POST /api/award-search
-// body: { originRegion, destRegion, cabin, strategy, heldProgrammeIds? }
-//
-// Public route — no auth. heldProgrammeIds is whatever the caller
-// explicitly tells us (checkboxes on the public form, nothing looked up
-// from storage) — never persisted anywhere.
 export async function POST(request: Request) {
   const supabase = await createClient();
 

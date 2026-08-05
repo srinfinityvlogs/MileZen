@@ -1,10 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { searchAwardOptions } from '@/lib/award-engine/searchAwards';
 
-// Small synonym table so a model saying "restaurants" or "eating out"
-// still matches an mcc_label of "Dining" — free-text category matching
-// between an LLM's phrasing and our seeded labels is inherently fuzzy,
-// this just covers the most common real-world phrasings.
 const CATEGORY_SYNONYMS: Record<string, string> = {
   restaurants: 'dining',
   restaurant: 'dining',
@@ -38,16 +34,6 @@ function normalizeCategory(raw: string): string {
   return CATEGORY_SYNONYMS[lc] ?? lc;
 }
 
-// ============================================================================
-// Tool schemas (OpenAI/Groq function-calling format)
-// ============================================================================
-// This is a fully public concierge — there is no signed-in user, no
-// account, nothing personal anywhere in this app. Every tool here reads
-// only the shared public catalog (card_products, mcc_rules, award_charts,
-// award_route_charts, transfer_partners, programmes) — the exact same
-// data /find-a-card, /redeem-miles, and /award-search read from. The
-// model decides which of these it needs per question; it does not get a
-// raw database connection or a "run arbitrary query" tool.
 export const CONCIERGE_TOOLS = [
   {
     type: 'function' as const,
@@ -109,11 +95,6 @@ export const CONCIERGE_TOOLS = [
   },
 ];
 
-// ============================================================================
-// Tool executors
-// ============================================================================
-// `supabase` just needs read access to public reference data — no
-// signed-in session involved anywhere in this app.
 export async function executeTool(supabase: SupabaseClient, toolName: string, input: any) {
   switch (toolName) {
     case 'search_cards_by_category': {
@@ -157,9 +138,7 @@ export async function executeTool(supabase: SupabaseClient, toolName: string, in
     case 'search_award_options': {
       let heldProgrammeIds: string[] | undefined;
       if (Array.isArray(input?.heldProgrammeNames) && input.heldProgrammeNames.length > 0) {
-        const { data: matched } = await supabase
-          .from('programmes')
-          .select('id, name');
+        const { data: matched } = await supabase.from('programmes').select('id, name');
         const namesLc = input.heldProgrammeNames.map((n: string) => n.toLowerCase());
         heldProgrammeIds = (matched ?? [])
           .filter((p) => namesLc.some((n: string) => p.name.toLowerCase().includes(n) || n.includes(p.name.toLowerCase())))
