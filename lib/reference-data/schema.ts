@@ -23,6 +23,11 @@ export const CardProductSchema = z.object({
   affiliateLink: z.string().url().optional(),
   tagline: z.string().max(140).nullable().optional(),
   feeWaiverNote: z.string().max(140).nullable().optional(),
+  // Whether this card includes airport lounge access as a benefit.
+  // Powers the "Cards that include lounge access" section on
+  // /lounge-access. Defaults to false so existing catalog entries
+  // don't need to be touched immediately.
+  loungeAccess: z.boolean().optional().default(false),
 });
 export const CardProductsFileSchema = z.array(CardProductSchema);
 

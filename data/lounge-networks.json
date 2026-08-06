@@ -1,0 +1,78 @@
+{
+  "commonCapabilities": [
+    "Digital card linking",
+    "Online eligibility checks",
+    "QR-based entry",
+    "OTP validation",
+    "Live entitlement mapping"
+  ],
+  "networks": [
+    {
+      "id": "tfs",
+      "name": "TFS (Travel Food Services)",
+      "shortName": "TFS",
+      "summary": "Powers a large part of India's lounge ecosystem.",
+      "steps": ["Add", "Verify", "Generate", "Eligible / QR Generate"],
+      "airports": [
+        { "city": "Delhi" },
+        { "city": "Mumbai" },
+        { "city": "Hyderabad" },
+        { "city": "Bengaluru", "note": "T1 mostly TFS flow" },
+        { "city": "Chennai" },
+        { "city": "Kolkata" },
+        { "city": "Pune" },
+        { "city": "Ahmedabad" },
+        { "city": "Goa" },
+        { "city": "Lucknow" },
+        { "city": "Jaipur" },
+        { "city": "Guwahati" }
+      ],
+      "airportsNote": "Coverage is broader than this list and expands over time — treat as a representative set, not exhaustive."
+    },
+    {
+      "id": "adani-one",
+      "name": "Adani One / LoungeOne",
+      "shortName": "Adani One",
+      "summary": "Airport-operator-linked lounge ecosystem, expanding steadily.",
+      "steps": ["Add", "Verify", "Generate", "Eligible / QR Generate"],
+      "airports": [
+        { "city": "Ahmedabad" },
+        { "city": "Amritsar" },
+        { "city": "Bengaluru", "note": "T2 mostly Adani / HOI ecosystem" },
+        { "city": "Coimbatore" },
+        { "city": "Guwahati" },
+        { "city": "Gwalior" },
+        { "city": "Jaipur" },
+        { "city": "Jammu" },
+        { "city": "Lucknow" },
+        { "city": "Mumbai" },
+        { "city": "Nagpur" },
+        { "city": "Navi Mumbai" },
+        { "city": "Pune" },
+        { "city": "Raipur" },
+        { "city": "Ranchi" },
+        { "city": "Srinagar" },
+        { "city": "Thiruvananthapuram" },
+        { "city": "Visakhapatnam" }
+      ]
+    },
+    {
+      "id": "hoi",
+      "name": "HOI",
+      "shortName": "HOI",
+      "summary": "A quieter, centralised orchestration layer across multiple lounge operators.",
+      "steps": ["Add", "Verify", "Generate", "Eligible / QR Generate"],
+      "airports": [
+        { "city": "Delhi" },
+        { "city": "Hyderabad" },
+        { "city": "Goa" },
+        { "city": "Kochi" },
+        { "city": "Chandigarh" },
+        { "city": "Amritsar" },
+        { "city": "Vadodara" },
+        { "city": "Mumbai" },
+        { "city": "Bengaluru" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+.shell {
+  --ink: #14213d;
+  --paper: #f7f5ef;
+  --emerald: #1f6f54;
+  --brass: #c9a227;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.hero {
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--emerald);
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 2.25rem;
+  margin: 0 0 0.75rem;
+}
+
+.subtitle {
+  max-width: 60ch;
+  line-height: 1.5;
+}
+
+.section {
+  margin-top: 3rem;
+}
+
+.sectionTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.pillRow {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+}
+
+.pill {
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.networkGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.networkCard {
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: #fff;
+}
+
+.networkName {
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  margin: 0 0 0.5rem;
+}
+
+.networkSummary {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #3a3a3a;
+}
+
+.stepList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.stepIndex {
+  background: var(--emerald);
+  color: #fff;
+  border-radius: 50%;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.airportsHeading {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.airportList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.airportNote {
+  color: var(--brass);
+  font-style: italic;
+}
+
+.airportsFootnote {
+  font-size: 0.75rem;
+  color: #6b6b6b;
+  margin-top: 0.75rem;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.cardTile {
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  padding: 1.25rem;
+  background: #fff;
+}
+
+.cardName {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  margin: 0 0 0.25rem;
+}
+
+.cardIssuer {
+  font-size: 0.8rem;
+  color: #6b6b6b;
+  margin-bottom: 1rem;
+}
+
+.applyLink {
+  display: inline-block;
+  background: var(--emerald);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.emptyState {
+  font-size: 0.9rem;
+  color: #6b6b6b;
+}

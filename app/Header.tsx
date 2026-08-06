@@ -18,6 +18,9 @@ export function Header() {
           <Link href="/award-search" className={styles.navLink}>
             Award search
           </Link>
+          <Link href="/lounge-access" className={styles.navLink}>
+            Lounge access
+          </Link>
           <Link href="/concierge" className={styles.navLink}>
             Concierge
           </Link>
