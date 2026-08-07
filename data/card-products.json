@@ -30,7 +30,8 @@
     "earnProgrammeName": "Membership Rewards",
     "affiliateLink": "https://example.com/apply/amex-platinum?ref=milezen",
     "tagline": "Premium lounge access and concierge benefits",
-    "feeWaiverNote": null
+    "feeWaiverNote": null,
+    "loungeAccess": true
   },
   {
     "issuerName": "HDFC Bank",

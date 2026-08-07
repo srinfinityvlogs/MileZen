@@ -11,14 +11,14 @@ interface LoungeCard {
   affiliateLink: string;
 }
 
-// Public page — no auth, server-rendered. Lounge network/steps/airport
-// content comes from data/lounge-networks.json (static, no DB round
-// trip — see lib/lounge-data.ts). The card list is the one piece that
-// hits Supabase, filtered to cards flagged lounge_access = true in the
+// Public page — no auth, server-rendered. Lounge network/airport content
+// comes from data/lounge-networks.json (static, no DB round trip — see
+// lib/lounge-data.ts). The card list is the one piece that hits
+// Supabase, filtered to cards flagged lounge_access = true in the
 // catalog (data/card-products.json -> loungeAccess, same pattern as
 // every other card field).
 export default async function LoungeAccessPage() {
-  const { commonCapabilities, networks } = getLoungeData();
+  const { networks } = getLoungeData();
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -49,17 +49,6 @@ export default async function LoungeAccessPage() {
       </header>
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>What most systems support today</h2>
-        <ul className={styles.pillRow}>
-          {commonCapabilities.map((capability) => (
-            <li key={capability} className={styles.pill}>
-              {capability}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className={styles.section}>
         <h2 className={styles.sectionTitle}>How to book, network by network</h2>
         <div className={styles.networkGrid}>
           {networks.map((network) => (
@@ -67,22 +56,13 @@ export default async function LoungeAccessPage() {
               <h3 className={styles.networkName}>{network.name}</h3>
               <p className={styles.networkSummary}>{network.summary}</p>
 
-              <ol className={styles.stepList}>
-                {network.steps.map((step, i) => (
-                  <li key={step} className={styles.step}>
-                    <span className={styles.stepIndex}>{i + 1}</span>
-                    {step}
-                  </li>
-                ))}
-              </ol>
-
               <h4 className={styles.airportsHeading}>Airports covered</h4>
               <ul className={styles.airportList}>
                 {network.airports.map((airport) => (
                   <li key={airport.city} className={styles.airportItem}>
                     {airport.city}
                     {airport.note && (
-                      <span className={styles.airportNote}> — {airport.note}</span>
+                      <span className={styles.airportNote}> · {airport.note}</span>
                     )}
                   </li>
                 ))}

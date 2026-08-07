@@ -11,13 +11,11 @@ const NetworkSchema = z.object({
   name: z.string(),
   shortName: z.string(),
   summary: z.string(),
-  steps: z.array(z.string()),
   airports: z.array(AirportSchema),
   airportsNote: z.string().optional(),
 });
 
 const LoungeDataSchema = z.object({
-  commonCapabilities: z.array(z.string()),
   networks: z.array(NetworkSchema),
 });
 
