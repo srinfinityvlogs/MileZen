@@ -78,6 +78,20 @@ export default async function FindACardPage({
       console.error('find-a-card Supabase query error:', error);
     }
 
+    // TEMPORARY DEBUG — remove once the stale-Fuel-card mystery is solved.
+    console.error(
+      'find-a-card RAW query result:',
+      JSON.stringify(
+        (data ?? []).map((c: any) => ({
+          name: c.name,
+          affiliate_link: c.affiliate_link,
+          mcc_rules: c.mcc_rules,
+        })),
+        null,
+        2
+      )
+    );
+
     results = (data ?? [])
       .flatMap((card: any) => {
         const rule = card.mcc_rules?.find((r: any) => r.mcc_label?.toLowerCase() === category.toLowerCase());
