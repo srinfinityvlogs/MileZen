@@ -68,7 +68,15 @@ export default async function FindACardPage({
       }
     }
 
-    const { data } = await query;
+    const { data, error } = await query;
+
+    if (error) {
+      // Surfaces in Vercel's Runtime Logs (Deployments -> select deployment
+      // -> Logs). Previously this was swallowed entirely by `const { data } = await query`,
+      // which is why the page silently fell back to "No cards match" instead
+      // of showing what actually went wrong.
+      console.error('find-a-card Supabase query error:', error);
+    }
 
     results = (data ?? [])
       .flatMap((card: any) => {
