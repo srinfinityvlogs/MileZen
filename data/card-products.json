@@ -131,5 +131,105 @@
     "affiliateLink": "https://example.com/apply/axis-magnus?ref=milezen",
     "tagline": "Flat high rewards across nearly every spend category",
     "feeWaiverNote": "Waived on ₹15L+ annual spend"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "name": "IndianOil Axis Bank Premium Credit Card",
+    "annualFee": 1000,
+    "currency": "INR",
+    "earnProgrammeName": "Axis EDGE Miles",
+    "affiliateLink": "https://example.com/apply/axis-indianoil-premium?ref=milezen",
+    "tagline": "Top-tier fuel rewards at IndianOil outlets",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 1
+  },
+  {
+    "issuerName": "RBL Bank",
+    "name": "IndianOil RBL Bank XTRA Credit Card",
+    "annualFee": 1500,
+    "currency": "INR",
+    "earnProgrammeName": "RBL Fuel Points",
+    "affiliateLink": "https://example.com/apply/rbl-indianoil-xtra?ref=milezen",
+    "tagline": "High fuel-point earn rate at Indian Oil stations",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.5
+  },
+  {
+    "issuerName": "Axis Bank",
+    "name": "Indian Oil Axis Bank RuPay Credit Card",
+    "network": "RuPay",
+    "annualFee": 500,
+    "currency": "INR",
+    "earnProgrammeName": "Axis Rewards",
+    "affiliateLink": "https://example.com/apply/axis-indianoil-rupay?ref=milezen",
+    "tagline": "Budget-friendly RuPay fuel card for IOCL stations",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.2
+  },
+  {
+    "issuerName": "IDFC FIRST Bank",
+    "name": "IDFC HPCL First Power Plus Credit Card",
+    "annualFee": 499,
+    "currency": "INR",
+    "earnProgrammeName": "IDFC FIRST Rewards",
+    "affiliateLink": "https://example.com/apply/idfc-hpcl-first-power-plus?ref=milezen",
+    "tagline": "Flat high rewards on HPCL fuel, LPG, groceries and utilities",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.25
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "name": "ICICI Bank HPCL Super Saver Credit Card",
+    "annualFee": 500,
+    "currency": "INR",
+    "earnProgrammeName": "ICICI Rewards",
+    "affiliateLink": "https://example.com/apply/icici-hpcl-super-saver?ref=milezen",
+    "tagline": "Direct cashback on HPCL fuel, boosted further via the HP Pay app",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.25
+  },
+  {
+    "issuerName": "SBI Card",
+    "name": "BPCL SBI Card",
+    "annualFee": 499,
+    "currency": "INR",
+    "earnProgrammeName": "SBI Rewards",
+    "affiliateLink": "https://example.com/apply/sbi-bpcl?ref=milezen",
+    "tagline": "Everyday fuel rewards at BPCL stations",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.25
+  },
+  {
+    "issuerName": "SBI Card",
+    "name": "BPCL SBI Card OCTANE",
+    "annualFee": 1499,
+    "currency": "INR",
+    "earnProgrammeName": "SBI Rewards",
+    "affiliateLink": "https://example.com/apply/sbi-bpcl-octane?ref=milezen",
+    "tagline": "Premium tier fuel rewards at BPCL stations",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.25
+  },
+  {
+    "issuerName": "IDFC FIRST Bank",
+    "name": "IDFC HPCL FIRST Power Credit Card",
+    "annualFee": 199,
+    "currency": "INR",
+    "earnProgrammeName": "IDFC FIRST Rewards",
+    "affiliateLink": "https://example.com/apply/idfc-hpcl-first-power?ref=milezen",
+    "tagline": "Low-fee entry card with strong HPCL fuel and LPG rewards",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.25
+  },
+  {
+    "issuerName": "BOBCARD",
+    "name": "HPCL ENERGIE BOBCARD Credit Card",
+    "annualFee": 499,
+    "currency": "INR",
+    "earnProgrammeName": "BOBCARD Rewards",
+    "affiliateLink": "https://example.com/apply/bobcard-hpcl-energie?ref=milezen",
+    "tagline": "Solid rewards across HPCL fuel, groceries and departmental stores",
+    "feeWaiverNote": null,
+    "rewardPointValueInr": 0.25
   }
 ]

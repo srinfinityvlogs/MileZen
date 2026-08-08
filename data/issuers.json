@@ -5,5 +5,8 @@
   { "name": "ICICI Bank", "country": "IN" },
   { "name": "SBI Card", "country": "IN" },
   { "name": "Axis Bank", "country": "IN" },
-  { "name": "Kotak Mahindra Bank", "country": "IN" }
+  { "name": "Kotak Mahindra Bank", "country": "IN" },
+  { "name": "RBL Bank", "country": "IN" },
+  { "name": "IDFC FIRST Bank", "country": "IN" },
+  { "name": "BOBCARD", "country": "IN" }
 ]

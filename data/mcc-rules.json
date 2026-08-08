@@ -154,14 +154,6 @@
   {
     "issuerName": "HDFC Bank",
     "cardName": "Infinia",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 2,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "HDFC Bank",
-    "cardName": "Infinia",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 5,
@@ -186,14 +178,6 @@
   {
     "issuerName": "HSBC",
     "cardName": "Premier",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 2,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "HSBC",
-    "cardName": "Premier",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 3,
@@ -218,14 +202,6 @@
   {
     "issuerName": "Amex",
     "cardName": "Platinum Card",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 1,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "Amex",
-    "cardName": "Platinum Card",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 2,
@@ -250,14 +226,6 @@
   {
     "issuerName": "HDFC Bank",
     "cardName": "MoneyBack+",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 1,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "HDFC Bank",
-    "cardName": "MoneyBack+",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 2,
@@ -278,14 +246,6 @@
     "mccLabel": "Entertainment",
     "rewardRate": 1,
     "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "ICICI Bank",
-    "cardName": "Amazon Pay",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 1,
-    "rewardType": "cashback_pct"
   },
   {
     "issuerName": "ICICI Bank",
@@ -314,14 +274,6 @@
   {
     "issuerName": "SBI Card",
     "cardName": "SimplyCLICK",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 1,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "SBI Card",
-    "cardName": "SimplyCLICK",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 5,
@@ -340,14 +292,6 @@
     "cardName": "SimplyCLICK",
     "mccCode": "7832",
     "mccLabel": "Entertainment",
-    "rewardRate": 2,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "ICICI Bank",
-    "cardName": "Sapphiro",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
     "rewardRate": 2,
     "rewardType": "points_per_unit"
   },
@@ -402,14 +346,6 @@
   {
     "issuerName": "SBI Card",
     "cardName": "SimplyeSAVE",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 1,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "SBI Card",
-    "cardName": "SimplyeSAVE",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 1,
@@ -458,14 +394,6 @@
   {
     "issuerName": "Kotak Mahindra Bank",
     "cardName": "Zen",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 1,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "Kotak Mahindra Bank",
-    "cardName": "Zen",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 2,
@@ -508,14 +436,6 @@
     "cardName": "ACE",
     "mccCode": "4511",
     "mccLabel": "Travel",
-    "rewardRate": 1.5,
-    "rewardType": "cashback_pct"
-  },
-  {
-    "issuerName": "Axis Bank",
-    "cardName": "ACE",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
     "rewardRate": 1.5,
     "rewardType": "cashback_pct"
   },
@@ -570,14 +490,6 @@
   {
     "issuerName": "HDFC Bank",
     "cardName": "Regalia",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 2,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "HDFC Bank",
-    "cardName": "Regalia",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 2,
@@ -626,14 +538,6 @@
   {
     "issuerName": "Axis Bank",
     "cardName": "Magnus",
-    "mccCode": "5541",
-    "mccLabel": "Fuel",
-    "rewardRate": 3,
-    "rewardType": "points_per_unit"
-  },
-  {
-    "issuerName": "Axis Bank",
-    "cardName": "Magnus",
     "mccCode": "5969",
     "mccLabel": "Online Shopping",
     "rewardRate": 6,
@@ -654,5 +558,85 @@
     "mccLabel": "Entertainment",
     "rewardRate": 4,
     "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "IndianOil Axis Bank Premium Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 6,
+    "rewardType": "points_per_unit",
+    "secondaryRewardRate": 1,
+    "secondaryRewardNote": "1X EDGE Miles on all other eligible spends"
+  },
+  {
+    "issuerName": "RBL Bank",
+    "cardName": "IndianOil RBL Bank XTRA Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 15,
+    "rewardType": "points_per_unit",
+    "secondaryRewardRate": 2,
+    "secondaryRewardNote": "2 Fuel Points per ₹100 on other eligible spends"
+  },
+  {
+    "issuerName": "Axis Bank",
+    "cardName": "Indian Oil Axis Bank RuPay Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 20,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "IDFC FIRST Bank",
+    "cardName": "IDFC HPCL First Power Plus Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 30,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "ICICI Bank",
+    "cardName": "ICICI Bank HPCL Super Saver Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 5,
+    "rewardType": "cashback_pct",
+    "secondaryRewardRate": 1.5,
+    "secondaryRewardNote": "Additional value back via the HP Pay app"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "BPCL SBI Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 13,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "SBI Card",
+    "cardName": "BPCL SBI Card OCTANE",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 25,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "IDFC FIRST Bank",
+    "cardName": "IDFC HPCL FIRST Power Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 21,
+    "rewardType": "points_per_unit"
+  },
+  {
+    "issuerName": "BOBCARD",
+    "cardName": "HPCL ENERGIE BOBCARD Credit Card",
+    "mccCode": "5541",
+    "mccLabel": "Fuel",
+    "rewardRate": 24,
+    "rewardType": "points_per_unit",
+    "secondaryRewardRate": 2,
+    "secondaryRewardNote": "2 points per ₹150 on all other transactions"
   }
 ]

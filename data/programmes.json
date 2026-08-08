@@ -10,5 +10,9 @@
   { "name": "BA Club", "type": "airline", "issuerName": null },
   { "name": "Maharaja Club", "type": "airline", "issuerName": null },
   { "name": "Accor ALL", "type": "hotel", "issuerName": null },
-  { "name": "Qantas Frequent Flyer", "type": "airline", "issuerName": null }
+  { "name": "Qantas Frequent Flyer", "type": "airline", "issuerName": null },
+  { "name": "Axis EDGE Miles", "type": "bank_currency", "issuerName": "Axis Bank" },
+  { "name": "RBL Fuel Points", "type": "bank_currency", "issuerName": "RBL Bank" },
+  { "name": "IDFC FIRST Rewards", "type": "bank_currency", "issuerName": "IDFC FIRST Bank" },
+  { "name": "BOBCARD Rewards", "type": "bank_currency", "issuerName": "BOBCARD" }
 ]

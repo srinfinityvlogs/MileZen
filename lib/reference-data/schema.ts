@@ -28,6 +28,12 @@ export const CardProductSchema = z.object({
   // /lounge-access. Defaults to false so existing catalog entries
   // don't need to be touched immediately.
   loungeAccess: z.boolean().optional().default(false),
+  // Rupee value of one reward point/mile when redeemed, where the
+  // issuer publishes a fixed redemption rate (e.g. "1 point = ₹0.25").
+  // Informational only — not used in reward-rate sorting on
+  // /find-a-card, since rewardRate there is compared within the same
+  // rewardType, not converted to a common currency value.
+  rewardPointValueInr: z.number().min(0).optional(),
 });
 export const CardProductsFileSchema = z.array(CardProductSchema);
 
@@ -38,6 +44,12 @@ export const MccRuleSchema = z.object({
   mccLabel: z.string().min(1),
   rewardRate: z.number().min(0),
   rewardType: z.enum(['cashback_pct', 'points_per_unit']),
+  // Secondary tier, mainly for fuel co-branded cards that pay a lower
+  // rate on spends outside the partner network (e.g. "1X on all other
+  // eligible spends" vs 6X at partner pumps). Optional and category-
+  // agnostic in the schema, but intended usage today is Fuel entries.
+  secondaryRewardRate: z.number().min(0).optional(),
+  secondaryRewardNote: z.string().max(140).optional(),
 });
 export const MccRulesFileSchema = z.array(MccRuleSchema);
 
