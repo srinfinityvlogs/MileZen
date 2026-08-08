@@ -45,6 +45,9 @@ export default async function FindACardPage({
 }: {
   searchParams: { category?: string; feeTier?: string; sort?: string };
 }) {
+  // TEMPORARY DEBUG — remove once the stale-Fuel-card mystery is solved.
+  console.error('find-a-card RUNTIME SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+
   const supabase = await createClient();
   const category = searchParams.category ?? '';
   const selectedTier = FEE_TIERS.find((t) => t.value === searchParams.feeTier);
