@@ -1,6 +1,12 @@
 import { createClient } from '@/lib/supabase/server';
 import styles from './find-a-card.module.css';
 
+// Prevents Next.js's fetch cache from serving stale Supabase results.
+// The page already renders dynamically because it reads searchParams,
+// but that alone doesn't stop individual fetch() calls (which the
+// Supabase client makes under the hood) from being cached separately.
+export const dynamic = 'force-dynamic';
+
 const CATEGORIES = ['Dining', 'Groceries', 'Travel', 'Fuel', 'Online Shopping', 'Utilities', 'Entertainment'];
 
 const FEE_TIERS = [
