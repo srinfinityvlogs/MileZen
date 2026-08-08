@@ -6,6 +6,13 @@ import styles from './find-a-card.module.css';
 // but that alone doesn't stop individual fetch() calls (which the
 // Supabase client makes under the hood) from being cached separately.
 export const dynamic = 'force-dynamic';
+// force-dynamic alone only stops Next from caching the rendered route —
+// it does NOT stop Next's separate Data Cache from caching individual
+// fetch() calls made inside the route (which is exactly what the
+// Supabase client does under the hood). This is the actual fix for
+// results staying frozen at whatever they were on first request,
+// regardless of database changes, redeploys, or schema reloads.
+export const fetchCache = 'force-no-store';
 
 const CATEGORIES = ['Dining', 'Groceries', 'Travel', 'Fuel', 'Online Shopping', 'Utilities', 'Entertainment'];
 
@@ -45,9 +52,6 @@ export default async function FindACardPage({
 }: {
   searchParams: { category?: string; feeTier?: string; sort?: string };
 }) {
-  // TEMPORARY DEBUG — remove once the stale-Fuel-card mystery is solved.
-  console.error('find-a-card RUNTIME SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-
   const supabase = await createClient();
   const category = searchParams.category ?? '';
   const selectedTier = FEE_TIERS.find((t) => t.value === searchParams.feeTier);
@@ -80,20 +84,6 @@ export default async function FindACardPage({
       // of showing what actually went wrong.
       console.error('find-a-card Supabase query error:', error);
     }
-
-    // TEMPORARY DEBUG — remove once the stale-Fuel-card mystery is solved.
-    console.error(
-      'find-a-card RAW query result:',
-      JSON.stringify(
-        (data ?? []).map((c: any) => ({
-          name: c.name,
-          affiliate_link: c.affiliate_link,
-          mcc_rules: c.mcc_rules,
-        })),
-        null,
-        2
-      )
-    );
 
     results = (data ?? [])
       .flatMap((card: any) => {
