@@ -27,6 +27,8 @@ interface CardResult {
   feeWaiverNote: string | null;
   rewardRate: number;
   rewardType: 'cashback_pct' | 'points_per_unit';
+  secondaryRewardRate: number | null;
+  secondaryRewardNote: string | null;
 }
 
 // Public page — no auth. Server-rendered (not a client fetch) so results
@@ -49,7 +51,7 @@ export default async function FindACardPage({
     let query = supabase
       .from('card_products')
       .select(
-        'id, name, annual_fee, currency, affiliate_link, tagline, fee_waiver_note, issuers(name), mcc_rules(mcc_label, reward_rate, reward_type)'
+        'id, name, annual_fee, currency, affiliate_link, tagline, fee_waiver_note, issuers(name), mcc_rules(mcc_label, reward_rate, reward_type, secondary_reward_rate, secondary_reward_note)'
       )
       .not('affiliate_link', 'is', null);
 
@@ -77,6 +79,8 @@ export default async function FindACardPage({
             feeWaiverNote: card.fee_waiver_note,
             rewardRate: rule.reward_rate,
             rewardType: rule.reward_type,
+            secondaryRewardRate: rule.secondary_reward_rate ?? null,
+            secondaryRewardNote: rule.secondary_reward_note ?? null,
           },
         ];
       })
@@ -152,6 +156,16 @@ export default async function FindACardPage({
                     {card.tagline && <p className={styles.tagline}>{card.tagline}</p>}
                     {card.annualFee === 0 && card.feeWaiverNote && (
                       <p className={styles.feeNote}>{card.feeWaiverNote}</p>
+                    )}
+                    {card.secondaryRewardRate !== null && (
+                      <p className={styles.feeNote}>
+                        {card.rewardRate}
+                        {card.rewardType === 'cashback_pct' ? '%' : '\u00d7'} on {category}
+                        {' \u00b7 '}
+                        {card.secondaryRewardRate}
+                        {card.rewardType === 'cashback_pct' ? '%' : '\u00d7'} elsewhere
+                        {card.secondaryRewardNote ? ` \u00b7 ${card.secondaryRewardNote}` : ''}
+                      </p>
                     )}
                   </div>
                   <div className={styles.numbers}>
